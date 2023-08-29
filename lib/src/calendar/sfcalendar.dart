@@ -8379,6 +8379,7 @@ class _SfCalendarState extends State<SfCalendar>
 
     return Positioned(
         left: isRTL ? _minWidth - resourceViewSize : 0,
+        //height: resourceViewSize,
         width: resourceViewSize,
         top: 0,
         bottom: 0,
@@ -8395,54 +8396,56 @@ class _SfCalendarState extends State<SfCalendar>
             child: verticalDivider,
           ),
           Positioned(
-              left: 0,
-              width: resourceViewSize,
-              top: widget.headerHeight + top,
-              bottom: 0,
-              child: MouseRegion(
-                  onEnter: (PointerEnterEvent event) {
-                    _pointerEnterEvent(event, false, isRTL, null,
-                        top + widget.headerHeight, 0, isResourceEnabled);
-                  },
-                  onExit: _pointerExitEvent,
-                  onHover: (PointerHoverEvent event) {
-                    _pointerHoverEvent(event, false, isRTL, null,
-                        top + widget.headerHeight, 0, isResourceEnabled);
-                  },
-                  child: GestureDetector(
-                    child: ScrollConfiguration(
-                      behavior: ScrollConfiguration.of(context)
-                          .copyWith(scrollbars: false),
-                      child: ListView(
-                          padding: EdgeInsets.zero,
-                          physics: const ClampingScrollPhysics(),
-                          controller: _resourcePanelScrollController,
-                          children: <Widget>[
-                            ResourceViewWidget(
-                                _resourceCollection,
-                                widget.resourceViewSettings,
-                                resourceItemHeight,
-                                widget.cellBorderColor,
-                                _calendarTheme,
-                                _themeData,
-                                _resourceImageNotifier,
-                                isRTL,
-                                _textScaleFactor,
-                                _resourceHoverNotifier.value,
-                                _imagePainterCollection,
-                                resourceViewSize,
-                                panelHeight,
-                                widget.resourceViewHeaderBuilder),
-                          ]),
-                    ),
-                    onTapUp: (TapUpDetails details) {
-                      _handleOnTapForResourcePanel(details, resourceItemHeight);
-                    },
-                    onLongPressStart: (LongPressStartDetails details) {
-                      _handleOnLongPressForResourcePanel(
-                          details, resourceItemHeight);
-                    },
-                  )))
+            left: 0,
+            width: resourceViewSize,
+            top: widget.headerHeight + top,
+            bottom: 0,
+            child: MouseRegion(
+              onEnter: (PointerEnterEvent event) {
+                _pointerEnterEvent(event, false, isRTL, null,
+                    top + widget.headerHeight, 0, isResourceEnabled);
+              },
+              onExit: _pointerExitEvent,
+              onHover: (PointerHoverEvent event) {
+                _pointerHoverEvent(event, false, isRTL, null,
+                    top + widget.headerHeight, 0, isResourceEnabled);
+              },
+              child: GestureDetector(
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context)
+                      .copyWith(scrollbars: false),
+                  child: ListView(
+                      padding: EdgeInsets.zero,
+                      physics: const ClampingScrollPhysics(),
+                      controller: _resourcePanelScrollController,
+                      children: <Widget>[
+                        ResourceViewWidget(
+                            _resourceCollection,
+                            widget.resourceViewSettings,
+                            resourceItemHeight,
+                            widget.cellBorderColor,
+                            _calendarTheme,
+                            _themeData,
+                            _resourceImageNotifier,
+                            isRTL,
+                            _textScaleFactor,
+                            _resourceHoverNotifier.value,
+                            _imagePainterCollection,
+                            resourceViewSize,
+                            panelHeight,
+                            widget.resourceViewHeaderBuilder),
+                      ]),
+                ),
+                onTapUp: (TapUpDetails details) {
+                  _handleOnTapForResourcePanel(details, resourceItemHeight);
+                },
+                onLongPressStart: (LongPressStartDetails details) {
+                  _handleOnLongPressForResourcePanel(
+                      details, resourceItemHeight);
+                },
+              ),
+            ),
+          )
         ]));
   }
 
@@ -8614,8 +8617,8 @@ class _SfCalendarState extends State<SfCalendar>
                 widget.timeSlotViewSettings.numberOfDaysInView)),
       ),
       _addResourcePanel(isResourceEnabled, resourceViewSize, height, isRTL),
-      _addCustomScrollView(widget.headerHeight, resourceViewSize, isRTL,
-          isResourceEnabled, width, height, agendaHeight),
+      // _addCustomScrollView(widget.headerHeight, resourceViewSize, isRTL,
+      //     isResourceEnabled, width, height, agendaHeight),
       _addAgendaView(agendaHeight, widget.headerHeight + height - agendaHeight,
           width, isRTL),
       _addDatePicker(widget.headerHeight, isRTL),

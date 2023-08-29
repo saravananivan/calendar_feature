@@ -86,7 +86,7 @@ class _ResourceViewWidgetState extends State<ResourceViewWidget> {
             ResourceViewHeaderDetails(
                 currentResource,
                 Rect.fromLTWH(
-                    0, yPosition, widget.width, widget.resourceItemHeight)));
+                    yPosition, 0, widget.width, widget.resourceItemHeight)));
         children.add(RepaintBoundary(child: child));
         yPosition += widget.resourceItemHeight;
       }
@@ -503,7 +503,7 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
         _circlePainter.color = resourceCellBorderColor;
         _circlePainter.strokeWidth = 0.5;
         _circlePainter.style = PaintingStyle.stroke;
-        canvas.drawLine(Offset(0, yPosition), Offset(size.width, yPosition),
+        canvas.drawLine(Offset(yPosition, 0), Offset(yPosition, size.width),
             _circlePainter);
 
         if (mouseHoverPosition != null) {
@@ -563,16 +563,16 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
       double actualItemHeight, double yPosition, double radius) {
     /// When the large text size given, the text must be cliped instead of
     /// overflow into next resource view, hence cliped the canvas.
-    canvas
-        .clipRect(Rect.fromLTWH(0, yPosition, size.width, resourceItemHeight));
+    // canvas
+    //     .clipRect(Rect.fromLTWH(0, yPosition, size.width, resourceItemHeight));
     _circlePainter.color = resource.color;
     _circlePainter.strokeWidth = _borderThickness;
     _circlePainter.style = PaintingStyle.stroke;
-    final double startXPosition = size.width / 2;
+    final double startXPosition = actualItemHeight / 2;
     final double startYPosition =
         (_borderThickness / 2) + yPosition + actualItemHeight / 2;
     canvas.drawCircle(
-        Offset(startXPosition, startYPosition), radius, _circlePainter);
+        Offset(startYPosition, startXPosition), radius, _circlePainter);
   }
 
   /// Draws the display name of the resource under the circle.
@@ -595,7 +595,7 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
             radius +
             (_borderThickness / 2)
         : yPosition + ((resourceItemHeight - _namePainter.height) / 2);
-    _namePainter.paint(canvas, Offset(startXPosition, startYPosition));
+    _namePainter.paint(canvas, Offset(startYPosition, startXPosition));
   }
 
   /// Draws the image assigned to the resource, in the inside circle.
@@ -669,30 +669,36 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     final double innerCircleYPosition =
         (_borderThickness / 2) + yPosition + _borderThickness + padding;
     if (resource.image != null) {
-      _drawImage(canvas, size, resource, innerCircleYPosition,
-          innerCircleXPosition, innerCircleWidth, innerCircleHeight);
+      // _drawImage(canvas, size, resource, innerCircleYPosition,
+      //     innerCircleXPosition, innerCircleWidth, innerCircleHeight);
+      _drawImage(canvas, size, resource, innerCircleXPosition,
+          innerCircleYPosition, innerCircleWidth, innerCircleHeight);
+      print("innerCircleXPosition: $innerCircleXPosition");
+      print("innerCircleYPosition: $innerCircleYPosition");
+      print("Size height: ${size.height}, Size width: ${size.width}");
       return;
     }
 
     double startXPosition = innerCircleXPosition + (innerCircleWidth / 2);
     double startYPosition = innerCircleYPosition + (innerCircleHeight / 2);
+
     canvas.drawCircle(
-        Offset(startXPosition, startYPosition), innerRadius, _circlePainter);
+        Offset(startYPosition, startXPosition), innerRadius, _circlePainter);
     final List<String> splitName = resource.displayName.split(' ');
     final String shortName = splitName.length > 1
         ? splitName[0].substring(0, 1) + splitName[1].substring(0, 1)
         : splitName[0].substring(0, 1);
-    final TextSpan span = TextSpan(
-        text: shortName,
-        style: themeData.textTheme.bodyLarge!.copyWith(
-            color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500));
-    _updateNamePainter(span);
-    _namePainter.layout(maxWidth: innerCircleWidth);
-    startXPosition =
-        innerCircleXPosition + ((innerCircleWidth - _namePainter.width) / 2);
-    startYPosition =
-        innerCircleYPosition + ((innerCircleHeight - _namePainter.height) / 2);
-    _namePainter.paint(canvas, Offset(startXPosition, startYPosition));
+    // final TextSpan span = TextSpan(
+    //     text: shortName,
+    //     style: themeData.textTheme.bodyLarge!.copyWith(
+    //         color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500));
+    // _updateNamePainter(span);
+    // _namePainter.layout(maxWidth: innerCircleWidth);
+    // startXPosition =
+    //     innerCircleXPosition + ((innerCircleWidth - _namePainter.width) / 2);
+    // startYPosition =
+    //     innerCircleYPosition + ((innerCircleHeight - _namePainter.height) / 2);
+    // _namePainter.paint(canvas, Offset(startXPosition, startYPosition));
   }
 
   List<CustomPainterSemantics> _getSemanticsBuilder(Size size) {

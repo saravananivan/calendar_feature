@@ -93,6 +93,7 @@ flutter:
     - assets/london_to_windsor_castle.json
     - assets/product_data.json
     - assets/chart_data.json
+    - packages/timezone/data/latest_all.tzf #Calendar package related assets
   fonts:
     - family: HeeboBold
       fonts:
