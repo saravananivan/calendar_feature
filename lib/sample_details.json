@@ -1,0 +1,24 @@
+[
+  {
+    "categoryName": "Calendar",
+    "mobileCategoryId": 1,
+    "webCategoryId": 1,
+    "controlList": [
+      {
+        "title": "Event Calendar",
+        "description": "Allows you to easily visualize and schedule appointments",
+        "image": "images/calendar.png",
+        "displayType": "tab",
+        "controlId": 1,
+        "subItems": [
+          {
+            "type": "sample",
+            "title": "Resource View",
+            "key": "shift_scheduler",
+            "codeLink": "https://github.com/syncfusion/flutter-examples/tree/master/lib/samples/calendar/shift_scheduler.dart"
+          }
+        ]
+      }
+    ]
+  }
+]
