@@ -465,7 +465,9 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
     /// The circle width.
-    final double actualItemWidth = size.width * 0.80;
+    //final double actualItemWidth = size.width * 0.80;
+
+    final double actualItemWidth = resourceItemHeight * 0.80;
 
     /// The circle height.
     final double actualItemHeight = resourceItemHeight * 0.80;
@@ -510,7 +512,8 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
           _addHovering(canvas, size, yPosition, resourceHoveringColor);
         }
 
-        yPosition += resourceItemHeight;
+        //yPosition += resourceItemHeight;
+        yPosition += actualItemWidth;
         canvas.restore();
       }
     } else {
@@ -569,8 +572,10 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     _circlePainter.strokeWidth = _borderThickness;
     _circlePainter.style = PaintingStyle.stroke;
     final double startXPosition = actualItemHeight / 2;
+    //TODO some hard coded values need to be fixed
     final double startYPosition =
-        (_borderThickness / 2) + yPosition + actualItemHeight / 2;
+        (_borderThickness / 2) + 32 + yPosition + actualItemHeight / 2;
+    print("_drawResourceBorder: $startXPosition, $startYPosition");
     canvas.drawCircle(
         Offset(startYPosition, startXPosition), radius, _circlePainter);
   }
@@ -664,18 +669,18 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     final double innerRadius = innerCircleWidth > innerCircleHeight
         ? innerCircleHeight / 2
         : innerCircleWidth / 2;
+    // final double innerCircleXPosition =
+    //     (actualItemWidth) / 2 + yPosition + _borderThickness + padding;
     final double innerCircleXPosition =
-        (size.width - actualItemWidth) / 2 + _borderThickness + padding;
+        (actualItemHeight) / 2 + yPosition + _borderThickness + padding;
     final double innerCircleYPosition =
-        (_borderThickness / 2) + yPosition + _borderThickness + padding;
+        (_borderThickness / 2) + _borderThickness + padding;
     if (resource.image != null) {
-      // _drawImage(canvas, size, resource, innerCircleYPosition,
-      //     innerCircleXPosition, innerCircleWidth, innerCircleHeight);
-      _drawImage(canvas, size, resource, innerCircleXPosition,
-          innerCircleYPosition, innerCircleWidth, innerCircleHeight);
-      print("innerCircleXPosition: $innerCircleXPosition");
-      print("innerCircleYPosition: $innerCircleYPosition");
-      print("Size height: ${size.height}, Size width: ${size.width}");
+      _drawImage(canvas, size, resource, innerCircleYPosition,
+          innerCircleXPosition, innerCircleWidth, innerCircleHeight);
+      // _drawImage(canvas, size, resource, innerCircleXPosition,
+      //     innerCircleYPosition, innerCircleWidth, innerCircleHeight);
+
       return;
     }
 
@@ -688,17 +693,17 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     final String shortName = splitName.length > 1
         ? splitName[0].substring(0, 1) + splitName[1].substring(0, 1)
         : splitName[0].substring(0, 1);
-    // final TextSpan span = TextSpan(
-    //     text: shortName,
-    //     style: themeData.textTheme.bodyLarge!.copyWith(
-    //         color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500));
-    // _updateNamePainter(span);
-    // _namePainter.layout(maxWidth: innerCircleWidth);
-    // startXPosition =
-    //     innerCircleXPosition + ((innerCircleWidth - _namePainter.width) / 2);
-    // startYPosition =
-    //     innerCircleYPosition + ((innerCircleHeight - _namePainter.height) / 2);
-    // _namePainter.paint(canvas, Offset(startXPosition, startYPosition));
+    final TextSpan span = TextSpan(
+        text: shortName,
+        style: themeData.textTheme.bodyLarge!.copyWith(
+            color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500));
+    _updateNamePainter(span);
+    _namePainter.layout(maxWidth: innerCircleWidth);
+    startXPosition =
+        innerCircleXPosition + ((innerCircleWidth - _namePainter.width) / 2);
+    startYPosition =
+        innerCircleYPosition + ((innerCircleHeight - _namePainter.height) / 2);
+    _namePainter.paint(canvas, Offset(startXPosition, startYPosition));
   }
 
   List<CustomPainterSemantics> _getSemanticsBuilder(Size size) {
