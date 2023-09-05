@@ -16,6 +16,13 @@
             "title": "Resource View",
             "key": "shift_scheduler",
             "codeLink": "https://github.com/syncfusion/flutter-examples/tree/master/lib/samples/calendar/shift_scheduler.dart"
+          },
+          {
+            "type": "sample",
+            "title": "Getting Started",
+            "key": "getting_started_calendar",
+            "codeLink": "https://github.com/syncfusion/flutter-examples/tree/master/lib/samples/calendar/getting_started.dart",
+            "needsPropertyPanel": true
           }
         ]
       }

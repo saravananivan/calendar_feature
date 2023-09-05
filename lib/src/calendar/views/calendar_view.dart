@@ -533,6 +533,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
             widget.calendar.viewHeaderHeight, widget.view);
     final double timeLabelWidth = CalendarViewHelper.getTimeLabelWidth(
         widget.calendar.timeSlotViewSettings.timeRulerSize, widget.view);
+    print("timeLabelWidth: $timeLabelWidth");
     final bool isResourceEnabled = CalendarViewHelper.isResourceEnabled(
         widget.calendar.dataSource, widget.view);
     final double resourceItemHeight = isResourceEnabled
@@ -544,6 +545,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
         : 0;
     final double resourceViewSize =
         isResourceEnabled ? widget.calendar.resourceViewSettings.size : 0;
+    print("resourceViewSize : $resourceViewSize");
     final bool isMonthView = widget.view == CalendarView.month ||
         widget.view == CalendarView.timelineMonth;
     final double weekNumberPanelWidth =
@@ -8692,12 +8694,16 @@ class _CalendarViewState extends State<_CalendarView>
       Positioned(
           top: viewHeaderHeight,
           left: 0,
-          right: 0,
-          height: timeLabelSize,
-          child: ListView(
+          //right: 0,
+          width: _timeIntervalHeight,
+          //height: timeLabelSize,
+          height: height,
+          child: Container(
+              //color: Colors.red,
+              child: ListView(
             padding: EdgeInsets.zero,
             controller: _timelineRulerController,
-            scrollDirection: Axis.horizontal,
+            //scrollDirection: Axis.horizontal,
             physics: const _CustomNeverScrollableScrollPhysics(),
             children: <Widget>[
               RepaintBoundary(
@@ -8713,13 +8719,14 @@ class _CalendarViewState extends State<_CalendarView>
                     CalendarViewHelper.isTimelineView(widget.view),
                     widget.visibleDates,
                     widget.textScaleFactor),
-                size: Size(width, timeLabelSize),
-              )),
+                //size: Size(width, timeLabelSize),
+                size: Size(_timeIntervalHeight, height),
+              ))
             ],
-          )),
+          ))),
       Positioned(
           top: viewHeaderHeight + timeLabelSize,
-          left: 0,
+          left: 90,
           right: 0,
           bottom: 0,
           child: Scrollbar(
@@ -12404,6 +12411,7 @@ class _TimeRulerView extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
+
     const double offset = 0.5;
     double xPosition, yPosition;
     DateTime date = visibleDates[0];
@@ -12468,8 +12476,8 @@ class _TimeRulerView extends CustomPainter {
         canvas.clipRect(
             Rect.fromLTWH(xPosition, 0, timeIntervalHeight, size.height));
         canvas.restore();
-        canvas.drawLine(
-            Offset(xPosition, 0), Offset(xPosition, size.height), _linePainter);
+        canvas.drawLine(Offset(0, xPosition),
+            Offset(timeIntervalHeight, xPosition), _linePainter);
       }
 
       final double minute = (i * timeInterval) + hour;
@@ -12502,11 +12510,11 @@ class _TimeRulerView extends CustomPainter {
       double startYPosition = yPosition - (_textPainter.height / 2);
 
       if (isTimelineView) {
-        startYPosition = (size.height - _textPainter.height) / 2;
-        startXPosition =
+        startYPosition =
             isRTL ? startXPosition - padding : startXPosition + padding;
+        startXPosition = (timeIntervalHeight - _textPainter.height) / 2;
       }
-
+      print("$startXPosition, $startYPosition");
       _textPainter.paint(canvas, Offset(startXPosition, startYPosition));
 
       if (!isTimelineView) {
@@ -12521,9 +12529,9 @@ class _TimeRulerView extends CustomPainter {
         }
       } else {
         if (isRTL) {
-          xPosition -= timeIntervalHeight;
+          xPosition -= 30;
         } else {
-          xPosition += timeIntervalHeight;
+          xPosition += 30;
         }
       }
     }

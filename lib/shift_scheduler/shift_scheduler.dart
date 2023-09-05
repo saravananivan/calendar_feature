@@ -54,6 +54,7 @@ class _ShiftSchedulerState extends SampleViewState {
   @override
   void initState() {
     _calendarController.view = CalendarView.timelineWeek;
+    //_calendarController.view = CalendarView.day;
     _selectedAppointment = null;
     _addResourceDetails();
     _addResources();

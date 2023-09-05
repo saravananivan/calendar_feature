@@ -8563,7 +8563,8 @@ class _SfCalendarState extends State<SfCalendar>
             _updateCalendarState,
             _getCalendarStateDetails,
             key: _customScrollViewKey,
-          )),
+          )
+          ),
     );
   }
 
@@ -8625,7 +8626,7 @@ class _SfCalendarState extends State<SfCalendar>
                 widget.cellBorderColor,
                 widget.timeSlotViewSettings.numberOfDaysInView)),
       ),
-      _addResourcePanel(isResourceEnabled, resourceViewSize, height, isRTL),
+      //_addResourcePanel(isResourceEnabled, resourceViewSize, height, isRTL),
       _addCustomScrollView(widget.headerHeight, resourceViewSize, isRTL,
           isResourceEnabled, width, height, agendaHeight),
       _addAgendaView(agendaHeight, widget.headerHeight + height - agendaHeight,
