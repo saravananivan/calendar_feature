@@ -8405,9 +8405,10 @@ class _SfCalendarState extends State<SfCalendar>
           ),
           Positioned(
             left: 0,
-            width: isHorizontalResource ? _minWidth : resourceViewSize,
+            width: isHorizontalResource ? null : resourceViewSize,
             height: isHorizontalResource ? resourceViewSize : null,
             top: widget.headerHeight + top,
+            right: isHorizontalResource ? 0 : null,
             bottom: isHorizontalResource ? null : 0,
             child: MouseRegion(
               onEnter: (PointerEnterEvent event) {
@@ -8443,8 +8444,12 @@ class _SfCalendarState extends State<SfCalendar>
                             _textScaleFactor,
                             _resourceHoverNotifier.value,
                             _imagePainterCollection,
-                            isHorizontalResource ? _minWidth : resourceViewSize,
-                            isHorizontalResource ? panelWidth : panelHeight,
+                            isHorizontalResource
+                                ? panelHeight
+                                : resourceViewSize,
+                            isHorizontalResource
+                                ? resourceViewSize
+                                : panelHeight,
                             widget.resourceViewHeaderBuilder,
                             isHorizontalResource),
                       ]),

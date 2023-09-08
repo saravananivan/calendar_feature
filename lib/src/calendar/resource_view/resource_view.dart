@@ -432,6 +432,12 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     final Size widgetSize = constraints.biggest;
     size = Size(widgetSize.width.isInfinite ? width : widgetSize.width,
         widgetSize.height.isInfinite ? panelHeight : widgetSize.height);
+    print("widgetSize : $widgetSize");
+    print(
+        "widgetSize.width.isInfinite(${widgetSize.width.isInfinite}) ? width($width) : widgetSize.width(${widgetSize.width})");
+    print(
+        "widgetSize.height.isInfinite${widgetSize.height.isInfinite} ? panelHeight(${panelHeight}) : widgetSize.height(${widgetSize.height})");
+    print("performLayout() : $size");
 
     for (dynamic child = firstChild; child != null; child = childAfter(child)) {
       child.layout(constraints.copyWith(
@@ -447,6 +453,7 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     final bool isNeedCustomPaint = childCount != 0;
 
     if (!isNeedCustomPaint) {
+      print("_resourceViewHeader: $size");
       _resourceViewHeader(context.canvas, size);
     } else {
       double yPosition = 0;
@@ -480,8 +487,10 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     /// The circle width.
     //final double actualItemWidth = size.width * 0.80;
 
+    const horizontalWidth = 75;
+
     final double actualItemWidth =
-        isHorizontalResource ? resourceItemHeight * 0.80 : size.width * 0.80;
+        isHorizontalResource ? horizontalWidth * 0.80 : size.width * 0.80;
 
     /// The circle height.
     final double actualItemHeight = resourceItemHeight * 0.80;
@@ -490,6 +499,8 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     final double radius = actualItemHeight < actualItemWidth
         ? actualItemHeight / 2
         : actualItemWidth / 2;
+    print(
+        "$actualItemHeight < $actualItemWidth : ${actualItemHeight < actualItemWidth}");
     final Color resourceCellBorderColor =
         cellBorderColor ?? calendarTheme.cellBorderColor!;
     final Color resourceHoveringColor =
@@ -501,7 +512,12 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     _circlePainter.color = resourceCellBorderColor;
     _circlePainter.strokeWidth = 0.5;
     _circlePainter.style = PaintingStyle.stroke;
-    final double lineXPosition = isRTL ? 0.5 : size.width - 0.5;
+    final double lineXPosition = isRTL
+        ? 0.5
+        : isHorizontalResource
+            ? horizontalWidth - 0.5
+            : size.width - 0.5;
+    print("size.width: ${size.width}");
     canvas.drawLine(Offset(lineXPosition, 0),
         Offset(lineXPosition, size.height), _circlePainter);
     final int count = resources!.length;
@@ -509,8 +525,8 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
       for (int i = 0; i < count; i++) {
         canvas.save();
         final CalendarResource resource = resources![i];
-        _drawResourceBorder(
-            resource, canvas, size, actualItemHeight, yPosition, radius);
+        _drawResourceBorder(resource, canvas, size, actualItemHeight, yPosition,
+            radius, actualItemWidth);
         _drawDisplayName(resource, displayNameTextStyle, canvas, size,
             yPosition, actualItemHeight, radius);
         _circlePainter.style = PaintingStyle.fill;
@@ -532,7 +548,7 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
 
         //yPosition += resourceItemHeight;
         yPosition +=
-            isHorizontalResource ? actualItemWidth : resourceItemHeight;
+            isHorizontalResource ? resourceItemHeight : resourceItemHeight;
         canvas.restore();
       }
     } else {
@@ -581,8 +597,14 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
   }
 
   /// Draws the outer circle border for the resource view.
-  void _drawResourceBorder(CalendarResource resource, Canvas canvas, Size size,
-      double actualItemHeight, double yPosition, double radius) {
+  void _drawResourceBorder(
+      CalendarResource resource,
+      Canvas canvas,
+      Size size,
+      double actualItemHeight,
+      double yPosition,
+      double radius,
+      double actualItemWidth) {
     /// When the large text size given, the text must be cliped instead of
     /// overflow into next resource view, hence cliped the canvas.
 
@@ -599,9 +621,10 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
         isHorizontalResource ? actualItemHeight / 2 : size.width / 2;
     //TODO some hard coded values need to be fixed
     final double startYPosition = isHorizontalResource
-        ? (_borderThickness / 2) + 32 + yPosition + actualItemHeight / 2
+        ? (_borderThickness / 2) + yPosition + resourceItemHeight / 2
         : (_borderThickness / 2) + yPosition + actualItemHeight / 2;
     print("_drawResourceBorder: $startXPosition, $startYPosition");
+    print("radius: $radius");
     isHorizontalResource
         ? canvas.drawCircle(
             Offset(startYPosition, startXPosition), radius, _circlePainter)
@@ -701,10 +724,15 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
         ? innerCircleHeight / 2
         : innerCircleWidth / 2;
     final double innerCircleXPosition = isHorizontalResource
-        ? (actualItemHeight) / 2 + yPosition + _borderThickness + padding
+        ? (resourceItemHeight - actualItemWidth) / 2 +
+            yPosition +
+            _borderThickness +
+            _borderThickness / 2 +
+            padding
         : (size.width - actualItemWidth) / 2 + _borderThickness + padding;
+
     final double innerCircleYPosition = isHorizontalResource
-        ? (_borderThickness / 2) + _borderThickness + padding
+        ? _borderThickness + padding
         : (_borderThickness / 2) + yPosition + _borderThickness + padding;
     if (resource.image != null) {
       _drawImage(canvas, size, resource, innerCircleYPosition,
@@ -717,7 +745,7 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
 
     isHorizontalResource
         ? canvas.drawCircle(
-            Offset(startYPosition, startXPosition), innerRadius, _circlePainter)
+            Offset(startXPosition, startYPosition), innerRadius, _circlePainter)
         : canvas.drawCircle(Offset(startXPosition, startYPosition), innerRadius,
             _circlePainter);
     final List<String> splitName = resource.displayName.split(' ');
