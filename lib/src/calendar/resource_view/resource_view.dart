@@ -23,7 +23,8 @@ class ResourceViewWidget extends StatefulWidget {
       this.imagePainterCollection,
       this.width,
       this.panelHeight,
-      this.resourceViewHeaderBuilder);
+      this.resourceViewHeaderBuilder,
+      this.isHorizontalResource);
 
   /// Holds the resources of the calendar.
   final List<CalendarResource>? resources;
@@ -67,6 +68,9 @@ class ResourceViewWidget extends StatefulWidget {
   /// Used to build the widget that replaces the resource view header.
   final ResourceViewHeaderBuilder? resourceViewHeaderBuilder;
 
+  //Added to adapt for Horizontal Resources
+  final bool isHorizontalResource;
+
   @override
   // ignore: library_private_types_in_public_api
   _ResourceViewWidgetState createState() => _ResourceViewWidgetState();
@@ -85,29 +89,32 @@ class _ResourceViewWidgetState extends State<ResourceViewWidget> {
             context,
             ResourceViewHeaderDetails(
                 currentResource,
-                Rect.fromLTWH(
-                    yPosition, 0, widget.width, widget.resourceItemHeight)));
+                widget.isHorizontalResource
+                    ? Rect.fromLTWH(
+                        yPosition, 0, widget.width, widget.resourceItemHeight)
+                    : Rect.fromLTWH(0, yPosition, widget.width,
+                        widget.resourceItemHeight)));
         children.add(RepaintBoundary(child: child));
         yPosition += widget.resourceItemHeight;
       }
     }
 
     return _ResourceViewRenderObjectWidget(
-      widget.resources,
-      widget.resourceViewSettings,
-      widget.resourceItemHeight,
-      widget.cellBorderColor,
-      widget.calendarTheme,
-      widget.themeData,
-      widget.notifier,
-      widget.isRTL,
-      widget.textScaleFactor,
-      widget.mouseHoverPosition,
-      widget.imagePainterCollection,
-      widget.width,
-      widget.panelHeight,
-      children: children,
-    );
+        widget.resources,
+        widget.resourceViewSettings,
+        widget.resourceItemHeight,
+        widget.cellBorderColor,
+        widget.calendarTheme,
+        widget.themeData,
+        widget.notifier,
+        widget.isRTL,
+        widget.textScaleFactor,
+        widget.mouseHoverPosition,
+        widget.imagePainterCollection,
+        widget.width,
+        widget.panelHeight,
+        children: children,
+        widget.isHorizontalResource);
   }
 }
 
@@ -126,6 +133,7 @@ class _ResourceViewRenderObjectWidget extends MultiChildRenderObjectWidget {
       this.imagePainterCollection,
       this.width,
       this.panelHeight,
+      this.isHorizontalResource,
       {List<Widget> children = const <Widget>[]})
       : super(children: children);
 
@@ -142,6 +150,7 @@ class _ResourceViewRenderObjectWidget extends MultiChildRenderObjectWidget {
   final Map<Object, DecorationImagePainter> imagePainterCollection;
   final double width;
   final double panelHeight;
+  final bool isHorizontalResource;
 
   @override
   _ResourceViewRenderObject createRenderObject(BuildContext context) {
@@ -158,7 +167,8 @@ class _ResourceViewRenderObjectWidget extends MultiChildRenderObjectWidget {
         mouseHoverPosition,
         imagePainterCollection,
         width,
-        panelHeight);
+        panelHeight,
+        isHorizontalResource);
   }
 
   @override
@@ -195,7 +205,8 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
       this._mouseHoverPosition,
       this._imagePainterCollection,
       this._width,
-      this._panelHeight);
+      this._panelHeight,
+      this.isHorizontalResource);
 
   List<CalendarResource>? _resources;
 
@@ -402,6 +413,8 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     markNeedsPaint();
   }
 
+  final bool isHorizontalResource;
+
   @override
   void attach(PipelineOwner owner) {
     super.attach(owner);
@@ -467,7 +480,8 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     /// The circle width.
     //final double actualItemWidth = size.width * 0.80;
 
-    final double actualItemWidth = resourceItemHeight * 0.80;
+    final double actualItemWidth =
+        isHorizontalResource ? resourceItemHeight * 0.80 : size.width * 0.80;
 
     /// The circle height.
     final double actualItemHeight = resourceItemHeight * 0.80;
@@ -505,15 +519,20 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
         _circlePainter.color = resourceCellBorderColor;
         _circlePainter.strokeWidth = 0.5;
         _circlePainter.style = PaintingStyle.stroke;
-        canvas.drawLine(Offset(yPosition, 0), Offset(yPosition, size.width),
-            _circlePainter);
+
+        isHorizontalResource
+            ? canvas.drawLine(Offset(yPosition, 0),
+                Offset(yPosition, size.width), _circlePainter)
+            : canvas.drawLine(Offset(0, yPosition),
+                Offset(size.width, yPosition), _circlePainter);
 
         if (mouseHoverPosition != null) {
           _addHovering(canvas, size, yPosition, resourceHoveringColor);
         }
 
         //yPosition += resourceItemHeight;
-        yPosition += actualItemWidth;
+        yPosition +=
+            isHorizontalResource ? actualItemWidth : resourceItemHeight;
         canvas.restore();
       }
     } else {
@@ -566,18 +585,28 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
       double actualItemHeight, double yPosition, double radius) {
     /// When the large text size given, the text must be cliped instead of
     /// overflow into next resource view, hence cliped the canvas.
-    // canvas
-    //     .clipRect(Rect.fromLTWH(0, yPosition, size.width, resourceItemHeight));
+
+    // TODO: Rect position need to be changed for isHorizontalResource
+    // isHorizontalResource
+    //     ? canvas.clipRect(
+    //         Rect.fromLTWH(0, yPosition, size.width, resourceItemHeight))
+    //     : canvas.clipRect(
+    //         Rect.fromLTWH(0, yPosition, size.width, resourceItemHeight));
     _circlePainter.color = resource.color;
     _circlePainter.strokeWidth = _borderThickness;
     _circlePainter.style = PaintingStyle.stroke;
-    final double startXPosition = actualItemHeight / 2;
+    final double startXPosition =
+        isHorizontalResource ? actualItemHeight / 2 : size.width / 2;
     //TODO some hard coded values need to be fixed
-    final double startYPosition =
-        (_borderThickness / 2) + 32 + yPosition + actualItemHeight / 2;
+    final double startYPosition = isHorizontalResource
+        ? (_borderThickness / 2) + 32 + yPosition + actualItemHeight / 2
+        : (_borderThickness / 2) + yPosition + actualItemHeight / 2;
     print("_drawResourceBorder: $startXPosition, $startYPosition");
-    canvas.drawCircle(
-        Offset(startYPosition, startXPosition), radius, _circlePainter);
+    isHorizontalResource
+        ? canvas.drawCircle(
+            Offset(startYPosition, startXPosition), radius, _circlePainter)
+        : canvas.drawCircle(
+            Offset(startXPosition, startYPosition), radius, _circlePainter);
   }
 
   /// Draws the display name of the resource under the circle.
@@ -600,7 +629,9 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
             radius +
             (_borderThickness / 2)
         : yPosition + ((resourceItemHeight - _namePainter.height) / 2);
-    _namePainter.paint(canvas, Offset(startYPosition, startXPosition));
+    isHorizontalResource
+        ? _namePainter.paint(canvas, Offset(startYPosition, startXPosition))
+        : _namePainter.paint(canvas, Offset(startXPosition, startYPosition));
   }
 
   /// Draws the image assigned to the resource, in the inside circle.
@@ -669,26 +700,26 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     final double innerRadius = innerCircleWidth > innerCircleHeight
         ? innerCircleHeight / 2
         : innerCircleWidth / 2;
-    // final double innerCircleXPosition =
-    //     (actualItemWidth) / 2 + yPosition + _borderThickness + padding;
-    final double innerCircleXPosition =
-        (actualItemHeight) / 2 + yPosition + _borderThickness + padding;
-    final double innerCircleYPosition =
-        (_borderThickness / 2) + _borderThickness + padding;
+    final double innerCircleXPosition = isHorizontalResource
+        ? (actualItemHeight) / 2 + yPosition + _borderThickness + padding
+        : (size.width - actualItemWidth) / 2 + _borderThickness + padding;
+    final double innerCircleYPosition = isHorizontalResource
+        ? (_borderThickness / 2) + _borderThickness + padding
+        : (_borderThickness / 2) + yPosition + _borderThickness + padding;
     if (resource.image != null) {
       _drawImage(canvas, size, resource, innerCircleYPosition,
           innerCircleXPosition, innerCircleWidth, innerCircleHeight);
-      // _drawImage(canvas, size, resource, innerCircleXPosition,
-      //     innerCircleYPosition, innerCircleWidth, innerCircleHeight);
-
       return;
     }
 
     double startXPosition = innerCircleXPosition + (innerCircleWidth / 2);
     double startYPosition = innerCircleYPosition + (innerCircleHeight / 2);
 
-    canvas.drawCircle(
-        Offset(startYPosition, startXPosition), innerRadius, _circlePainter);
+    isHorizontalResource
+        ? canvas.drawCircle(
+            Offset(startYPosition, startXPosition), innerRadius, _circlePainter)
+        : canvas.drawCircle(Offset(startXPosition, startYPosition), innerRadius,
+            _circlePainter);
     final List<String> splitName = resource.displayName.split(' ');
     final String shortName = splitName.length > 1
         ? splitName[0].substring(0, 1) + splitName[1].substring(0, 1)

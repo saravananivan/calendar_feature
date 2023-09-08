@@ -8423,7 +8423,6 @@ class _CalendarViewState extends State<_CalendarView>
             : viewHeaderHeight +
                 allDayPanelHeight +
                 (_timeIntervalHeight * _horizontalLinesCount!);
-
     return Positioned(
         left: 0,
         width: overAllWidth,
@@ -8698,9 +8697,7 @@ class _CalendarViewState extends State<_CalendarView>
           width: _timeIntervalHeight,
           //height: timeLabelSize,
           height: height,
-          child: Container(
-              //color: Colors.red,
-              child: ListView(
+          child: ListView(
             padding: EdgeInsets.zero,
             controller: _timelineRulerController,
             //scrollDirection: Axis.horizontal,
@@ -8723,9 +8720,10 @@ class _CalendarViewState extends State<_CalendarView>
                 size: Size(_timeIntervalHeight, height),
               ))
             ],
-          ))),
+          )),
       Positioned(
           top: viewHeaderHeight + timeLabelSize,
+          //left: 0
           left: 90,
           right: 0,
           bottom: 0,

@@ -219,6 +219,7 @@ class SfCalendar extends StatefulWidget {
     this.onDragStart,
     this.onDragUpdate,
     this.onDragEnd,
+    this.isHorizontalResource = false,
   })  : assert(firstDayOfWeek >= 1 && firstDayOfWeek <= 7),
         assert(headerHeight >= 0),
         assert(viewHeaderHeight >= -1),
@@ -2386,6 +2387,8 @@ class SfCalendar extends StatefulWidget {
   ///
   /// ```
   final AppointmentResizeEndCallback? onAppointmentResizeEnd;
+
+  final bool isHorizontalResource;
 
   /// Returns the date time collection at which the recurrence appointment will
   /// recur
@@ -8348,7 +8351,7 @@ class _SfCalendarState extends State<SfCalendar>
   /// Adds the resource panel on the left side of the view, if the resource
   /// collection is not null.
   Widget _addResourcePanel(bool isResourceEnabled, double resourceViewSize,
-      double height, bool isRTL) {
+      double height, bool isRTL, bool isHorizontalResource) {
     if (!isResourceEnabled) {
       return Positioned(
         left: 0,
@@ -8369,10 +8372,10 @@ class _SfCalendarState extends State<SfCalendar>
         height - top,
         widget.resourceViewSettings,
         _resourceCollection!.length);
-    final double panelHeight = resourceItemHeight * _resourceCollection!.length;
 
     //TODO fix : resourceItemHeight into resourceItemWidth
     final double panelWidth = resourceItemHeight * _resourceCollection!.length;
+    final double panelHeight = resourceItemHeight * _resourceCollection!.length;
 
     final Widget verticalDivider = VerticalDivider(
       width: 0.5,
@@ -8382,10 +8385,13 @@ class _SfCalendarState extends State<SfCalendar>
 
     return Positioned(
         left: isRTL ? _minWidth - resourceViewSize : 0,
-        width: _minWidth, //resourceViewSize,
+        width: isHorizontalResource ? _minWidth : resourceViewSize,
         top: 0,
         bottom: 0,
         child: Stack(children: <Widget>[
+          //Does know exactly which this vertical divider is position, check
+          //if required need to add a isHorizontalResource parameter to
+          //alter the width behave
           Positioned(
             left: _isRTL ? 0.5 : resourceViewSize - 0.5,
             width: 0.5,
@@ -8399,10 +8405,10 @@ class _SfCalendarState extends State<SfCalendar>
           ),
           Positioned(
             left: 0,
-            width: _minWidth, //resourceViewSize,
-            height: resourceViewSize,
+            width: isHorizontalResource ? _minWidth : resourceViewSize,
+            height: isHorizontalResource ? resourceViewSize : null,
             top: widget.headerHeight + top,
-            //bottom: 0,
+            bottom: isHorizontalResource ? null : 0,
             child: MouseRegion(
               onEnter: (PointerEnterEvent event) {
                 _pointerEnterEvent(event, false, isRTL, null,
@@ -8417,33 +8423,31 @@ class _SfCalendarState extends State<SfCalendar>
                 child: ScrollConfiguration(
                   behavior: ScrollConfiguration.of(context)
                       .copyWith(scrollbars: true),
-                  child: Container(
-                    //color: Colors.red,
-                    child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        padding: EdgeInsets.zero,
-                        physics: const ClampingScrollPhysics(),
-                        controller: _resourcePanelScrollController,
-                        children: <Widget>[
-                          ResourceViewWidget(
-                              _resourceCollection,
-                              widget.resourceViewSettings,
-                              resourceItemHeight,
-                              widget.cellBorderColor,
-                              _calendarTheme,
-                              _themeData,
-                              _resourceImageNotifier,
-                              isRTL,
-                              _textScaleFactor,
-                              _resourceHoverNotifier.value,
-                              _imagePainterCollection,
-                              _minWidth,
-                              panelWidth,
-                              //resourceViewSize,
-                              //panelHeight,
-                              widget.resourceViewHeaderBuilder),
-                        ]),
-                  ),
+                  child: ListView(
+                      scrollDirection: isHorizontalResource
+                          ? Axis.horizontal
+                          : Axis.vertical,
+                      padding: EdgeInsets.zero,
+                      physics: const ClampingScrollPhysics(),
+                      controller: _resourcePanelScrollController,
+                      children: <Widget>[
+                        ResourceViewWidget(
+                            _resourceCollection,
+                            widget.resourceViewSettings,
+                            resourceItemHeight,
+                            widget.cellBorderColor,
+                            _calendarTheme,
+                            _themeData,
+                            _resourceImageNotifier,
+                            isRTL,
+                            _textScaleFactor,
+                            _resourceHoverNotifier.value,
+                            _imagePainterCollection,
+                            isHorizontalResource ? _minWidth : resourceViewSize,
+                            isHorizontalResource ? panelWidth : panelHeight,
+                            widget.resourceViewHeaderBuilder,
+                            isHorizontalResource),
+                      ]),
                 ),
                 onTapUp: (TapUpDetails details) {
                   _handleOnTapForResourcePanel(details, resourceItemHeight);
@@ -8563,8 +8567,7 @@ class _SfCalendarState extends State<SfCalendar>
             _updateCalendarState,
             _getCalendarStateDetails,
             key: _customScrollViewKey,
-          )
-          ),
+          )),
     );
   }
 
@@ -8626,7 +8629,8 @@ class _SfCalendarState extends State<SfCalendar>
                 widget.cellBorderColor,
                 widget.timeSlotViewSettings.numberOfDaysInView)),
       ),
-      //_addResourcePanel(isResourceEnabled, resourceViewSize, height, isRTL),
+      _addResourcePanel(isResourceEnabled, resourceViewSize, height, isRTL,
+          widget.isHorizontalResource),
       _addCustomScrollView(widget.headerHeight, resourceViewSize, isRTL,
           isResourceEnabled, width, height, agendaHeight),
       _addAgendaView(agendaHeight, widget.headerHeight + height - agendaHeight,

@@ -53,7 +53,7 @@ class _ShiftSchedulerState extends SampleViewState {
 
   @override
   void initState() {
-    _calendarController.view = CalendarView.timelineWeek;
+    _calendarController.view = CalendarView.timelineDay;
     //_calendarController.view = CalendarView.day;
     _selectedAppointment = null;
     _addResourceDetails();
@@ -531,6 +531,7 @@ class _ShiftSchedulerState extends SampleViewState {
       onTap: calendarTapCallback,
       allowDragAndDrop: true,
       allowAppointmentResize: true,
+      isHorizontalResource: false, //Added to Constrain horizontal resources
     );
   }
 }
