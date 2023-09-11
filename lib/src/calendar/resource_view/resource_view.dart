@@ -623,8 +623,6 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     final double startYPosition = isHorizontalResource
         ? (_borderThickness / 2) + yPosition + resourceItemHeight / 2
         : (_borderThickness / 2) + yPosition + actualItemHeight / 2;
-    print("_drawResourceBorder: $startXPosition, $startYPosition");
-    print("radius: $radius");
     isHorizontalResource
         ? canvas.drawCircle(
             Offset(startYPosition, startXPosition), radius, _circlePainter)
@@ -644,14 +642,25 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     final TextSpan span =
         TextSpan(text: resource.displayName, style: displayNameTextStyle);
     _updateNamePainter(span);
-    _namePainter.layout(maxWidth: size.width);
-    final double startXPosition = (size.width - _namePainter.width) / 2;
+    _namePainter.layout(
+        maxWidth: isHorizontalResource ? resourceItemHeight : size.width);
+    final double startXPosition = isHorizontalResource
+        // ? (resourceItemHeight - _namePainter.width) / 2
+        ? actualItemHeight + 0.5
+        : (size.width - _namePainter.width) / 2;
     final double startYPosition = resourceViewSettings.showAvatar
-        ? (yPosition + (actualItemHeight / 2)) +
-            _borderThickness +
-            radius +
-            (_borderThickness / 2)
-        : yPosition + ((resourceItemHeight - _namePainter.height) / 2);
+        ? isHorizontalResource
+            ? (yPosition + (actualItemHeight / 2))
+            : (yPosition + (actualItemHeight / 2)) +
+                _borderThickness +
+                radius +
+                (_borderThickness / 2)
+        : isHorizontalResource
+            ? yPosition + (actualItemHeight / 2)
+            : yPosition + ((resourceItemHeight - _namePainter.height) / 2);
+
+    print("Name position : ${startYPosition}, ${startXPosition}");
+
     isHorizontalResource
         ? _namePainter.paint(canvas, Offset(startYPosition, startXPosition))
         : _namePainter.paint(canvas, Offset(startXPosition, startYPosition));

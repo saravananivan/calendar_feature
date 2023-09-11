@@ -8388,7 +8388,7 @@ class _SfCalendarState extends State<SfCalendar>
         width: isHorizontalResource ? _minWidth : resourceViewSize,
         top: 0,
         bottom: 0,
-        child: Stack(children: <Widget>[
+        child: Stack(clipBehavior: Clip.none, children: <Widget>[
           //Does know exactly which this vertical divider is position, check
           //if required need to add a isHorizontalResource parameter to
           //alter the width behave
@@ -8406,7 +8406,9 @@ class _SfCalendarState extends State<SfCalendar>
           Positioned(
             left: 0,
             width: isHorizontalResource ? null : resourceViewSize,
-            height: isHorizontalResource ? resourceViewSize : null,
+            height: isHorizontalResource
+                ? /*resourceViewSize*/ resourceItemHeight
+                : null,
             top: widget.headerHeight + top,
             right: isHorizontalResource ? 0 : null,
             bottom: isHorizontalResource ? null : 0,
@@ -8636,12 +8638,12 @@ class _SfCalendarState extends State<SfCalendar>
       ),
       _addResourcePanel(isResourceEnabled, resourceViewSize, height, isRTL,
           widget.isHorizontalResource),
-      _addCustomScrollView(widget.headerHeight, resourceViewSize, isRTL,
-          isResourceEnabled, width, height, agendaHeight),
-      _addAgendaView(agendaHeight, widget.headerHeight + height - agendaHeight,
-          width, isRTL),
-      _addDatePicker(widget.headerHeight, isRTL),
-      _getCalendarViewPopup(),
+      // _addCustomScrollView(widget.headerHeight, resourceViewSize, isRTL,
+      //     isResourceEnabled, width, height, agendaHeight),
+      // _addAgendaView(agendaHeight, widget.headerHeight + height - agendaHeight,
+      //     width, isRTL),
+      // _addDatePicker(widget.headerHeight, isRTL),
+      // _getCalendarViewPopup(),
     ];
     if (_isNeedLoadMore && widget.loadMoreWidgetBuilder != null) {
       children.add(Container(
