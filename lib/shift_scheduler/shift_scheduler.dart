@@ -531,7 +531,7 @@ class _ShiftSchedulerState extends SampleViewState {
       onTap: calendarTapCallback,
       allowDragAndDrop: true,
       allowAppointmentResize: true,
-      isHorizontalResource: true, //Added to Constrain horizontal resources
+      //isHorizontalResource: true, //Added to Constrain horizontal resources
     );
   }
 }

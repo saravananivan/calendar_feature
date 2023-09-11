@@ -34,32 +34,33 @@ class CustomCalendarScrollView extends StatefulWidget {
   /// view(time slot, month, timeline and appointment views) widgets of
   /// calendar widget.
   const CustomCalendarScrollView(
-      this.calendar,
-      this.view,
-      this.width,
-      this.height,
-      this.agendaSelectedDate,
-      this.isRTL,
-      this.locale,
-      this.calendarTheme,
-      this.themeData,
-      this.specialRegions,
-      this.blackoutDates,
-      this.controller,
-      this.removePicker,
-      this.resourcePanelScrollController,
-      this.resourceCollection,
-      this.textScaleFactor,
-      this.isMobilePlatform,
-      this.fadeInController,
-      this.minDate,
-      this.maxDate,
-      this.localizations,
-      this.timelineMonthWeekNumberNotifier,
-      this.updateCalendarState,
-      this.getCalendarState,
-      {Key? key})
-      : super(key: key);
+    this.calendar,
+    this.view,
+    this.width,
+    this.height,
+    this.agendaSelectedDate,
+    this.isRTL,
+    this.locale,
+    this.calendarTheme,
+    this.themeData,
+    this.specialRegions,
+    this.blackoutDates,
+    this.controller,
+    this.removePicker,
+    this.resourcePanelScrollController,
+    this.resourceCollection,
+    this.textScaleFactor,
+    this.isMobilePlatform,
+    this.fadeInController,
+    this.minDate,
+    this.maxDate,
+    this.localizations,
+    this.timelineMonthWeekNumberNotifier,
+    this.updateCalendarState,
+    this.getCalendarState, {
+    Key? key,
+    this.isHorizontalResource = false,
+  }) : super(key: key);
 
   /// Holds the calendar instance used to get the calendar properties.
   final SfCalendar calendar;
@@ -135,6 +136,9 @@ class CustomCalendarScrollView extends StatefulWidget {
 
   /// Holds the localization data of the calendar widget.
   final SfLocalizations localizations;
+
+  /// Checks if the resources are set Horizontal
+  final bool isHorizontalResource;
 
   /// Updates the focus to the custom scroll view element.
   void updateFocus() {
@@ -2930,106 +2934,98 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
   List<Widget> _addViews() {
     if (_children.isEmpty) {
       _previousView = _CalendarView(
-        widget.calendar,
-        widget.view,
-        _previousViewVisibleDates,
-        widget.width,
-        widget.height,
-        widget.agendaSelectedDate,
-        widget.locale,
-        widget.calendarTheme,
-        widget.themeData,
-        _getRegions(_previousViewVisibleDates),
-        _getDatesWithInVisibleDateRange(
-            widget.blackoutDates, _previousViewVisibleDates),
-        _focusNode,
-        widget.removePicker,
-        widget.calendar.allowViewNavigation,
-        widget.controller,
-        widget.resourcePanelScrollController,
-        widget.resourceCollection,
-        widget.textScaleFactor,
-        widget.isMobilePlatform,
-        widget.minDate,
-        widget.maxDate,
-        widget.localizations,
-        widget.timelineMonthWeekNumberNotifier,
-        _dragDetails,
-        (UpdateCalendarStateDetails details) {
-          _updateCalendarViewStateDetails(details);
-        },
-        (UpdateCalendarStateDetails details) {
-          _getCalendarViewStateDetails(details);
-        },
-        key: _previousViewKey,
-      );
+          widget.calendar,
+          widget.view,
+          _previousViewVisibleDates,
+          widget.width,
+          widget.height,
+          widget.agendaSelectedDate,
+          widget.locale,
+          widget.calendarTheme,
+          widget.themeData,
+          _getRegions(_previousViewVisibleDates),
+          _getDatesWithInVisibleDateRange(
+              widget.blackoutDates, _previousViewVisibleDates),
+          _focusNode,
+          widget.removePicker,
+          widget.calendar.allowViewNavigation,
+          widget.controller,
+          widget.resourcePanelScrollController,
+          widget.resourceCollection,
+          widget.textScaleFactor,
+          widget.isMobilePlatform,
+          widget.minDate,
+          widget.maxDate,
+          widget.localizations,
+          widget.timelineMonthWeekNumberNotifier,
+          _dragDetails, (UpdateCalendarStateDetails details) {
+        _updateCalendarViewStateDetails(details);
+      }, (UpdateCalendarStateDetails details) {
+        _getCalendarViewStateDetails(details);
+      },
+          key: _previousViewKey,
+          isHorizontalResource: widget.isHorizontalResource);
       _currentView = _CalendarView(
-        widget.calendar,
-        widget.view,
-        _visibleDates,
-        widget.width,
-        widget.height,
-        widget.agendaSelectedDate,
-        widget.locale,
-        widget.calendarTheme,
-        widget.themeData,
-        _getRegions(_visibleDates),
-        _getDatesWithInVisibleDateRange(widget.blackoutDates, _visibleDates),
-        _focusNode,
-        widget.removePicker,
-        widget.calendar.allowViewNavigation,
-        widget.controller,
-        widget.resourcePanelScrollController,
-        widget.resourceCollection,
-        widget.textScaleFactor,
-        widget.isMobilePlatform,
-        widget.minDate,
-        widget.maxDate,
-        widget.localizations,
-        widget.timelineMonthWeekNumberNotifier,
-        _dragDetails,
-        (UpdateCalendarStateDetails details) {
-          _updateCalendarViewStateDetails(details);
-        },
-        (UpdateCalendarStateDetails details) {
-          _getCalendarViewStateDetails(details);
-        },
-        key: _currentViewKey,
-      );
+          widget.calendar,
+          widget.view,
+          _visibleDates,
+          widget.width,
+          widget.height,
+          widget.agendaSelectedDate,
+          widget.locale,
+          widget.calendarTheme,
+          widget.themeData,
+          _getRegions(_visibleDates),
+          _getDatesWithInVisibleDateRange(widget.blackoutDates, _visibleDates),
+          _focusNode,
+          widget.removePicker,
+          widget.calendar.allowViewNavigation,
+          widget.controller,
+          widget.resourcePanelScrollController,
+          widget.resourceCollection,
+          widget.textScaleFactor,
+          widget.isMobilePlatform,
+          widget.minDate,
+          widget.maxDate,
+          widget.localizations,
+          widget.timelineMonthWeekNumberNotifier,
+          _dragDetails, (UpdateCalendarStateDetails details) {
+        _updateCalendarViewStateDetails(details);
+      }, (UpdateCalendarStateDetails details) {
+        _getCalendarViewStateDetails(details);
+      },
+          key: _currentViewKey,
+          isHorizontalResource: widget.isHorizontalResource);
       _nextView = _CalendarView(
-        widget.calendar,
-        widget.view,
-        _nextViewVisibleDates,
-        widget.width,
-        widget.height,
-        widget.agendaSelectedDate,
-        widget.locale,
-        widget.calendarTheme,
-        widget.themeData,
-        _getRegions(_nextViewVisibleDates),
-        _getDatesWithInVisibleDateRange(
-            widget.blackoutDates, _nextViewVisibleDates),
-        _focusNode,
-        widget.removePicker,
-        widget.calendar.allowViewNavigation,
-        widget.controller,
-        widget.resourcePanelScrollController,
-        widget.resourceCollection,
-        widget.textScaleFactor,
-        widget.isMobilePlatform,
-        widget.minDate,
-        widget.maxDate,
-        widget.localizations,
-        widget.timelineMonthWeekNumberNotifier,
-        _dragDetails,
-        (UpdateCalendarStateDetails details) {
-          _updateCalendarViewStateDetails(details);
-        },
-        (UpdateCalendarStateDetails details) {
-          _getCalendarViewStateDetails(details);
-        },
-        key: _nextViewKey,
-      );
+          widget.calendar,
+          widget.view,
+          _nextViewVisibleDates,
+          widget.width,
+          widget.height,
+          widget.agendaSelectedDate,
+          widget.locale,
+          widget.calendarTheme,
+          widget.themeData,
+          _getRegions(_nextViewVisibleDates),
+          _getDatesWithInVisibleDateRange(
+              widget.blackoutDates, _nextViewVisibleDates),
+          _focusNode,
+          widget.removePicker,
+          widget.calendar.allowViewNavigation,
+          widget.controller,
+          widget.resourcePanelScrollController,
+          widget.resourceCollection,
+          widget.textScaleFactor,
+          widget.isMobilePlatform,
+          widget.minDate,
+          widget.maxDate,
+          widget.localizations,
+          widget.timelineMonthWeekNumberNotifier,
+          _dragDetails, (UpdateCalendarStateDetails details) {
+        _updateCalendarViewStateDetails(details);
+      }, (UpdateCalendarStateDetails details) {
+        _getCalendarViewStateDetails(details);
+      }, key: _nextViewKey, isHorizontalResource: widget.isHorizontalResource);
 
       _children.add(_previousView);
       _children.add(_currentView);
@@ -3070,38 +3066,34 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
     // update the view with the visible dates on swiping end.
     if (view.visibleDates != visibleDates) {
       view = _CalendarView(
-        widget.calendar,
-        widget.view,
-        visibleDates,
-        widget.width,
-        widget.height,
-        widget.agendaSelectedDate,
-        widget.locale,
-        widget.calendarTheme,
-        widget.themeData,
-        _getRegions(visibleDates),
-        _getDatesWithInVisibleDateRange(widget.blackoutDates, visibleDates),
-        _focusNode,
-        widget.removePicker,
-        widget.calendar.allowViewNavigation,
-        widget.controller,
-        widget.resourcePanelScrollController,
-        widget.resourceCollection,
-        widget.textScaleFactor,
-        widget.isMobilePlatform,
-        widget.minDate,
-        widget.maxDate,
-        widget.localizations,
-        widget.timelineMonthWeekNumberNotifier,
-        _dragDetails,
-        (UpdateCalendarStateDetails details) {
-          _updateCalendarViewStateDetails(details);
-        },
-        (UpdateCalendarStateDetails details) {
-          _getCalendarViewStateDetails(details);
-        },
-        key: viewKey,
-      );
+          widget.calendar,
+          widget.view,
+          visibleDates,
+          widget.width,
+          widget.height,
+          widget.agendaSelectedDate,
+          widget.locale,
+          widget.calendarTheme,
+          widget.themeData,
+          _getRegions(visibleDates),
+          _getDatesWithInVisibleDateRange(widget.blackoutDates, visibleDates),
+          _focusNode,
+          widget.removePicker,
+          widget.calendar.allowViewNavigation,
+          widget.controller,
+          widget.resourcePanelScrollController,
+          widget.resourceCollection,
+          widget.textScaleFactor,
+          widget.isMobilePlatform,
+          widget.minDate,
+          widget.maxDate,
+          widget.localizations,
+          widget.timelineMonthWeekNumberNotifier,
+          _dragDetails, (UpdateCalendarStateDetails details) {
+        _updateCalendarViewStateDetails(details);
+      }, (UpdateCalendarStateDetails details) {
+        _getCalendarViewStateDetails(details);
+      }, key: viewKey, isHorizontalResource: widget.isHorizontalResource);
 
       _children[index] = view;
     }
@@ -3112,75 +3104,67 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       if (widget.view != CalendarView.month &&
           !CalendarViewHelper.isTimelineView(widget.view)) {
         view = _CalendarView(
-          widget.calendar,
-          widget.view,
-          visibleDates,
-          widget.width,
-          widget.height,
-          widget.agendaSelectedDate,
-          widget.locale,
-          widget.calendarTheme,
-          widget.themeData,
-          view.regions,
-          view.blackoutDates,
-          _focusNode,
-          widget.removePicker,
-          widget.calendar.allowViewNavigation,
-          widget.controller,
-          widget.resourcePanelScrollController,
-          widget.resourceCollection,
-          widget.textScaleFactor,
-          widget.isMobilePlatform,
-          widget.minDate,
-          widget.maxDate,
-          widget.localizations,
-          widget.timelineMonthWeekNumberNotifier,
-          _dragDetails,
-          (UpdateCalendarStateDetails details) {
-            _updateCalendarViewStateDetails(details);
-          },
-          (UpdateCalendarStateDetails details) {
-            _getCalendarViewStateDetails(details);
-          },
-          key: viewKey,
-        );
+            widget.calendar,
+            widget.view,
+            visibleDates,
+            widget.width,
+            widget.height,
+            widget.agendaSelectedDate,
+            widget.locale,
+            widget.calendarTheme,
+            widget.themeData,
+            view.regions,
+            view.blackoutDates,
+            _focusNode,
+            widget.removePicker,
+            widget.calendar.allowViewNavigation,
+            widget.controller,
+            widget.resourcePanelScrollController,
+            widget.resourceCollection,
+            widget.textScaleFactor,
+            widget.isMobilePlatform,
+            widget.minDate,
+            widget.maxDate,
+            widget.localizations,
+            widget.timelineMonthWeekNumberNotifier,
+            _dragDetails, (UpdateCalendarStateDetails details) {
+          _updateCalendarViewStateDetails(details);
+        }, (UpdateCalendarStateDetails details) {
+          _getCalendarViewStateDetails(details);
+        }, key: viewKey, isHorizontalResource: widget.isHorizontalResource);
         _children[index] = view;
       } else if (view.calendar != widget.calendar) {
         /// Update the calendar view when calendar properties like appointment
         /// text style dynamically changed.
         view = _CalendarView(
-          widget.calendar,
-          widget.view,
-          visibleDates,
-          widget.width,
-          widget.height,
-          widget.agendaSelectedDate,
-          widget.locale,
-          widget.calendarTheme,
-          widget.themeData,
-          view.regions,
-          view.blackoutDates,
-          _focusNode,
-          widget.removePicker,
-          widget.calendar.allowViewNavigation,
-          widget.controller,
-          widget.resourcePanelScrollController,
-          widget.resourceCollection,
-          widget.textScaleFactor,
-          widget.isMobilePlatform,
-          widget.minDate,
-          widget.maxDate,
-          widget.localizations,
-          widget.timelineMonthWeekNumberNotifier,
-          _dragDetails,
-          (UpdateCalendarStateDetails details) {
-            _updateCalendarViewStateDetails(details);
-          },
-          (UpdateCalendarStateDetails details) {
-            _getCalendarViewStateDetails(details);
-          },
-          key: viewKey,
-        );
+            widget.calendar,
+            widget.view,
+            visibleDates,
+            widget.width,
+            widget.height,
+            widget.agendaSelectedDate,
+            widget.locale,
+            widget.calendarTheme,
+            widget.themeData,
+            view.regions,
+            view.blackoutDates,
+            _focusNode,
+            widget.removePicker,
+            widget.calendar.allowViewNavigation,
+            widget.controller,
+            widget.resourcePanelScrollController,
+            widget.resourceCollection,
+            widget.textScaleFactor,
+            widget.isMobilePlatform,
+            widget.minDate,
+            widget.maxDate,
+            widget.localizations,
+            widget.timelineMonthWeekNumberNotifier,
+            _dragDetails, (UpdateCalendarStateDetails details) {
+          _updateCalendarViewStateDetails(details);
+        }, (UpdateCalendarStateDetails details) {
+          _getCalendarViewStateDetails(details);
+        }, key: viewKey, isHorizontalResource: widget.isHorizontalResource);
 
         _children[index] = view;
       } else if (view.visibleDates == _currentViewVisibleDates) {
@@ -3214,38 +3198,34 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
       /// Update the calendar view when calendar properties like blackout dates
       /// dynamically changed.
       view = _CalendarView(
-        widget.calendar,
-        widget.view,
-        visibleDates,
-        widget.width,
-        widget.height,
-        widget.agendaSelectedDate,
-        widget.locale,
-        widget.calendarTheme,
-        widget.themeData,
-        view.regions,
-        view.blackoutDates,
-        _focusNode,
-        widget.removePicker,
-        widget.calendar.allowViewNavigation,
-        widget.controller,
-        widget.resourcePanelScrollController,
-        widget.resourceCollection,
-        widget.textScaleFactor,
-        widget.isMobilePlatform,
-        widget.minDate,
-        widget.maxDate,
-        widget.localizations,
-        widget.timelineMonthWeekNumberNotifier,
-        _dragDetails,
-        (UpdateCalendarStateDetails details) {
-          _updateCalendarViewStateDetails(details);
-        },
-        (UpdateCalendarStateDetails details) {
-          _getCalendarViewStateDetails(details);
-        },
-        key: viewKey,
-      );
+          widget.calendar,
+          widget.view,
+          visibleDates,
+          widget.width,
+          widget.height,
+          widget.agendaSelectedDate,
+          widget.locale,
+          widget.calendarTheme,
+          widget.themeData,
+          view.regions,
+          view.blackoutDates,
+          _focusNode,
+          widget.removePicker,
+          widget.calendar.allowViewNavigation,
+          widget.controller,
+          widget.resourcePanelScrollController,
+          widget.resourceCollection,
+          widget.textScaleFactor,
+          widget.isMobilePlatform,
+          widget.minDate,
+          widget.maxDate,
+          widget.localizations,
+          widget.timelineMonthWeekNumberNotifier,
+          _dragDetails, (UpdateCalendarStateDetails details) {
+        _updateCalendarViewStateDetails(details);
+      }, (UpdateCalendarStateDetails details) {
+        _getCalendarViewStateDetails(details);
+      }, key: viewKey, isHorizontalResource: widget.isHorizontalResource);
 
       _children[index] = view;
     }
@@ -5536,7 +5516,8 @@ class _CalendarView extends StatefulWidget {
       this.dragDetails,
       this.updateCalendarState,
       this.getCalendarState,
-      {Key? key})
+      {Key? key,
+      this.isHorizontalResource = false})
       : super(key: key);
 
   final List<DateTime> visibleDates;
@@ -5565,6 +5546,7 @@ class _CalendarView extends StatefulWidget {
   final DateTime maxDate;
   final SfLocalizations localizations;
   final ValueNotifier<_DragPaintDetails> dragDetails;
+  final bool isHorizontalResource;
 
   @override
   _CalendarViewState createState() => _CalendarViewState();
@@ -8592,7 +8574,9 @@ class _CalendarViewState extends State<_CalendarView>
                               widget.calendarTheme,
                               CalendarViewHelper.isTimelineView(widget.view),
                               widget.visibleDates,
-                              widget.textScaleFactor),
+                              widget.textScaleFactor,
+                              isHorizontalResource:
+                                  widget.isHorizontalResource),
                           size: Size(timeLabelWidth, height),
                         ),
                       ),
@@ -8693,14 +8677,14 @@ class _CalendarViewState extends State<_CalendarView>
       Positioned(
           top: viewHeaderHeight,
           left: 0,
-          //right: 0,
-          width: _timeIntervalHeight,
-          //height: timeLabelSize,
-          height: height,
+          right: widget.isHorizontalResource ? null : 0,
+          width: widget.isHorizontalResource ? _timeIntervalHeight : null,
+          height: widget.isHorizontalResource ? height : timeLabelSize,
           child: ListView(
             padding: EdgeInsets.zero,
             controller: _timelineRulerController,
-            //scrollDirection: Axis.horizontal,
+            scrollDirection:
+                widget.isHorizontalResource ? Axis.vertical : Axis.horizontal,
             physics: const _CustomNeverScrollableScrollPhysics(),
             children: <Widget>[
               RepaintBoundary(
@@ -8715,16 +8699,17 @@ class _CalendarViewState extends State<_CalendarView>
                     widget.calendarTheme,
                     CalendarViewHelper.isTimelineView(widget.view),
                     widget.visibleDates,
-                    widget.textScaleFactor),
-                //size: Size(width, timeLabelSize),
-                size: Size(_timeIntervalHeight, height),
+                    widget.textScaleFactor,
+                    isHorizontalResource: widget.isHorizontalResource),
+                size: widget.isHorizontalResource
+                    ? Size(_timeIntervalHeight, height)
+                    : Size(width, timeLabelSize),
               ))
             ],
           )),
       Positioned(
           top: viewHeaderHeight + timeLabelSize,
-          //left: 0
-          left: 90,
+          left: widget.isHorizontalResource ? 90 : 0,
           right: 0,
           bottom: 0,
           child: Scrollbar(
@@ -12391,7 +12376,8 @@ class _TimeRulerView extends CustomPainter {
       this.calendarTheme,
       this.isTimelineView,
       this.visibleDates,
-      this.textScaleFactor);
+      this.textScaleFactor,
+      {this.isHorizontalResource = false});
 
   final double horizontalLinesCount;
   final double timeIntervalHeight;
@@ -12405,6 +12391,7 @@ class _TimeRulerView extends CustomPainter {
   final double textScaleFactor;
   final Paint _linePainter = Paint();
   final TextPainter _textPainter = TextPainter();
+  final bool isHorizontalResource;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -12474,8 +12461,11 @@ class _TimeRulerView extends CustomPainter {
         canvas.clipRect(
             Rect.fromLTWH(xPosition, 0, timeIntervalHeight, size.height));
         canvas.restore();
-        canvas.drawLine(Offset(0, xPosition),
-            Offset(timeIntervalHeight, xPosition), _linePainter);
+        isHorizontalResource
+            ? canvas.drawLine(Offset(0, xPosition),
+                Offset(timeIntervalHeight, xPosition), _linePainter)
+            : canvas.drawLine(Offset(xPosition, 0),
+                Offset(xPosition, size.height), _linePainter);
       }
 
       final double minute = (i * timeInterval) + hour;
@@ -12508,9 +12498,16 @@ class _TimeRulerView extends CustomPainter {
       double startYPosition = yPosition - (_textPainter.height / 2);
 
       if (isTimelineView) {
-        startYPosition =
-            isRTL ? startXPosition - padding : startXPosition + padding;
-        startXPosition = (timeIntervalHeight - _textPainter.height) / 2;
+        startYPosition = isHorizontalResource
+            ? isRTL
+                ? startXPosition - padding
+                : startXPosition + padding
+            : (size.height - _textPainter.height) / 2;
+        startXPosition = isHorizontalResource
+            ? (timeIntervalHeight - _textPainter.height) / 2
+            : isRTL
+                ? startXPosition - padding
+                : startXPosition + padding;
       }
       print("$startXPosition, $startYPosition");
       _textPainter.paint(canvas, Offset(startXPosition, startYPosition));
@@ -12527,9 +12524,9 @@ class _TimeRulerView extends CustomPainter {
         }
       } else {
         if (isRTL) {
-          xPosition -= 30;
+          xPosition -= isHorizontalResource ? 30 : timeIntervalHeight;
         } else {
-          xPosition += 30;
+          xPosition += isHorizontalResource ? 30 : timeIntervalHeight;
         }
       }
     }
