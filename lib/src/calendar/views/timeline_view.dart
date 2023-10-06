@@ -39,7 +39,8 @@ class TimelineWidget extends StatefulWidget {
       this.height,
       this.minDate,
       this.maxDate,
-      this.blackoutDates);
+      this.blackoutDates,
+      {this.isHorizontalResource = false});
 
   /// Defines the total number of time slots needed in the view.
   final double horizontalLinesCountPerView;
@@ -104,6 +105,9 @@ class TimelineWidget extends StatefulWidget {
 
   /// Holds the blackout dates collection of calendar.
   final List<DateTime>? blackoutDates;
+
+  /// Holds does a boolean that the resources need to be horizontal
+  final bool isHorizontalResource;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -179,6 +183,7 @@ class _TimelineWidgetState extends State<TimelineWidget> {
       widget.minDate,
       widget.maxDate,
       widget.blackoutDates,
+      widget.isHorizontalResource,
       widgets: _children,
     );
   }
@@ -368,6 +373,7 @@ class _TimelineRenderWidget extends MultiChildRenderObjectWidget {
       this.minDate,
       this.maxDate,
       this.blackoutDates,
+      this.isHorizontalResource,
       {List<Widget> widgets = const <Widget>[]})
       : super(children: widgets);
 
@@ -392,6 +398,7 @@ class _TimelineRenderWidget extends MultiChildRenderObjectWidget {
   final DateTime minDate;
   final DateTime maxDate;
   final List<DateTime>? blackoutDates;
+  final bool isHorizontalResource;
 
   @override
   _TimelineRenderObject createRenderObject(BuildContext context) {
@@ -416,7 +423,8 @@ class _TimelineRenderWidget extends MultiChildRenderObjectWidget {
         specialRegionBounds,
         minDate,
         maxDate,
-        blackoutDates);
+        blackoutDates,
+        isHorizontalResource);
   }
 
   @override
@@ -469,7 +477,8 @@ class _TimelineRenderObject extends CustomCalendarRenderObject {
       this.specialRegionBounds,
       this._minDate,
       this._maxDate,
-      this._blackoutDates);
+      this._blackoutDates,
+      this.isHorizontalResource);
 
   double _horizontalLinesCountPerView;
 
@@ -724,6 +733,8 @@ class _TimelineRenderObject extends CustomCalendarRenderObject {
   late bool isMobilePlatform;
   final Paint _linePainter = Paint();
 
+  final bool isHorizontalResource;
+
   @override
   bool get isRepaintBoundary => true;
 
@@ -881,6 +892,73 @@ class _TimelineRenderObject extends CustomCalendarRenderObject {
 
   void _drawTimeline(
       Canvas canvas, bool isResourceEnabled, int visibleDatesCount) {
+    if (isHorizontalResource) {
+      _linePainter.strokeWidth = 0.5;
+      _linePainter.strokeCap = StrokeCap.round;
+      _linePainter.color = cellBorderColor ?? calendarTheme.cellBorderColor!;
+      double startXPosition = 0.5;
+      double endXPosition = 0.5;
+      double startYPosition = 0;
+      double endYPosition = size.height;
+
+      final Offset start = Offset(startXPosition, startYPosition);
+      final Offset end = Offset(endXPosition, endYPosition);
+      canvas.drawLine(start, end, _linePainter);
+
+      startXPosition = 0;
+      endXPosition = size.width;
+      startYPosition = 0;
+      endYPosition = 0;
+      if (isRTL) {
+        startXPosition = size.height;
+        endXPosition = size.height;
+      }
+
+      final List<Offset> points = <Offset>[];
+      for (int i = 0;
+          i < horizontalLinesCountPerView * visibleDatesCount;
+          i++) {
+        if (isMobilePlatform) {
+          points.add(Offset(startXPosition, startYPosition));
+          points.add(Offset(endXPosition, endYPosition));
+        } else {
+          _linePainter.color = Colors.red ?? calendarTheme.cellBorderColor!;
+          canvas.drawLine(Offset(startXPosition, startYPosition),
+              Offset(endXPosition, endYPosition), _linePainter);
+        }
+
+        if (isRTL) {
+          startYPosition -= timeIntervalWidth;
+          endYPosition -= timeIntervalWidth;
+        } else {
+          startYPosition += timeIntervalWidth;
+          endYPosition += timeIntervalWidth;
+        }
+      }
+
+      if (isMobilePlatform) {
+        canvas.drawPoints(PointMode.lines, points, _linePainter);
+      }
+
+      /// Draws the vertical line to separate the slots based on resource count.
+      if (isResourceEnabled) {
+        startXPosition = resourceItemHeight;
+        endYPosition = size.height;
+        startYPosition = 0;
+        for (int i = 0; i < resourceCollection!.length; i++) {
+          canvas.drawLine(Offset(startXPosition, startYPosition),
+              Offset(startXPosition, endYPosition), _linePainter);
+          startXPosition += resourceItemHeight;
+          if (i / 2 == 0) {
+            _linePainter.color = Colors.red ?? calendarTheme.cellBorderColor!;
+          } else {
+            _linePainter.color = Colors.green ?? calendarTheme.cellBorderColor!;
+          }
+        }
+      }
+
+      return;
+    }
     _linePainter.strokeWidth = 0.5;
     _linePainter.strokeCap = StrokeCap.round;
     _linePainter.color = cellBorderColor ?? calendarTheme.cellBorderColor!;

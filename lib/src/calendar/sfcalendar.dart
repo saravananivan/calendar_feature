@@ -8404,13 +8404,17 @@ class _SfCalendarState extends State<SfCalendar>
             child: verticalDivider,
           ),
           Positioned(
-            left: 0,
+            left: isHorizontalResource
+                ? (isResourceEnabled && !isRTL ? resourceViewSize : 0)
+                : 0,
             width: isHorizontalResource ? null : resourceViewSize,
             height: isHorizontalResource
                 ? /*resourceViewSize*/ resourceItemHeight
                 : null,
-            top: widget.headerHeight + top,
-            right: isHorizontalResource ? 0 : null,
+            top: isHorizontalResource ? top : widget.headerHeight + top,
+            right: isHorizontalResource
+                ? (isResourceEnabled && isRTL ? resourceViewSize : 0)
+                : null,
             bottom: isHorizontalResource ? null : 0,
             child: MouseRegion(
               onEnter: (PointerEnterEvent event) {
@@ -8637,8 +8641,8 @@ class _SfCalendarState extends State<SfCalendar>
                 widget.cellBorderColor,
                 widget.timeSlotViewSettings.numberOfDaysInView)),
       ),
-      // _addResourcePanel(isResourceEnabled, resourceViewSize, height, isRTL,
-      //     widget.isHorizontalResource),
+      _addResourcePanel(isResourceEnabled, resourceViewSize, height, isRTL,
+          widget.isHorizontalResource),
       _addCustomScrollView(widget.headerHeight, resourceViewSize, isRTL,
           isResourceEnabled, width, height, agendaHeight),
       _addAgendaView(agendaHeight, widget.headerHeight + height - agendaHeight,

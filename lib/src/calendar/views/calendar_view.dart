@@ -512,6 +512,7 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
         widget.calendar.monthViewSettings.navigationDirection ==
                 MonthNavigationDirection.horizontal ||
             widget.view != CalendarView.month;
+    print("isHorizontalNavigation : $isHorizontalNavigation");
     if (isHorizontalNavigation) {
       leftPosition = -widget.width;
       rightPosition = -widget.width;
@@ -5900,10 +5901,17 @@ class _CalendarViewState extends State<_CalendarView>
       return;
     }
 
-    if (widget.resourcePanelScrollController!.offset !=
-        _timelineViewVerticalScrollController!.offset) {
-      _timelineViewVerticalScrollController!
-          .jumpTo(widget.resourcePanelScrollController!.offset);
+    if (widget.isHorizontalResource) {
+      if (widget.resourcePanelScrollController!.offset !=
+          _scrollController!.offset) {
+        _scrollController!.jumpTo(widget.resourcePanelScrollController!.offset);
+      }
+    } else {
+      if (widget.resourcePanelScrollController!.offset !=
+          _timelineViewVerticalScrollController!.offset) {
+        _timelineViewVerticalScrollController!
+            .jumpTo(widget.resourcePanelScrollController!.offset);
+      }
     }
   }
 
@@ -5921,10 +5929,28 @@ class _CalendarViewState extends State<_CalendarView>
       return;
     }
 
-    if (widget.resourcePanelScrollController!.offset !=
-        _timelineViewVerticalScrollController!.offset) {
-      widget.resourcePanelScrollController!
-          .jumpTo(_timelineViewVerticalScrollController!.offset);
+    print(
+        "_timelineViewVerticalScrollController!.offset : ${_timelineViewVerticalScrollController!.offset}");
+
+    if (widget.isHorizontalResource) {
+      print(
+          "_timelineViewVerticalScrollController!.offset : ${_timelineViewVerticalScrollController!.offset}");
+      if (_timelineRulerController!.offset !=
+          _timelineViewVerticalScrollController!.offset) {
+        _timelineRulerController!
+            .jumpTo(_timelineViewVerticalScrollController!.offset);
+      }
+    } else {
+      if (widget.resourcePanelScrollController!.offset !=
+          _timelineViewVerticalScrollController!.offset) {
+        widget.resourcePanelScrollController!
+            .jumpTo(_timelineViewVerticalScrollController!.offset);
+      }
+    }
+
+    if (widget.isHorizontalResource) {
+      // _timelineViewHeaderScrollController!
+      //     .jumpTo(_timelineViewVerticalScrollController!.offset);
     }
   }
 
@@ -6283,8 +6309,16 @@ class _CalendarViewState extends State<_CalendarView>
       return;
     }
 
-    if (_timelineRulerController!.offset != _scrollController!.offset) {
-      _scrollController!.jumpTo(_timelineRulerController!.offset);
+    if (widget.isHorizontalResource) {
+      if (_timelineRulerController!.offset !=
+          _timelineViewVerticalScrollController!.offset) {
+        _timelineViewVerticalScrollController!
+            .jumpTo(_timelineRulerController!.offset);
+      }
+    } else {
+      if (_timelineRulerController!.offset != _scrollController!.offset) {
+        _scrollController!.jumpTo(_timelineRulerController!.offset);
+      }
     }
   }
 
@@ -6300,8 +6334,16 @@ class _CalendarViewState extends State<_CalendarView>
         _timelineViewHeaderNotifier.value = !_timelineViewHeaderNotifier.value;
       }
 
-      if (_timelineRulerController!.offset != _scrollController!.offset) {
-        _timelineRulerController!.jumpTo(_scrollController!.offset);
+      if (widget.isHorizontalResource) {
+        if (widget.resourcePanelScrollController!.offset !=
+            _scrollController!.offset) {
+          widget.resourcePanelScrollController!
+              .jumpTo(_scrollController!.offset);
+        }
+      } else {
+        if (_timelineRulerController!.offset != _scrollController!.offset) {
+          _timelineRulerController!.jumpTo(_scrollController!.offset);
+        }
       }
 
       if (widget.view == CalendarView.timelineMonth &&
@@ -6314,8 +6356,10 @@ class _CalendarViewState extends State<_CalendarView>
           widget.timelineMonthWeekNumberNotifier.value = date;
         }
       }
-
-      _timelineViewHeaderScrollController!.jumpTo(_scrollController!.offset);
+      if (widget.isHorizontalResource) {
+      } else {
+        _timelineViewHeaderScrollController!.jumpTo(_scrollController!.offset);
+      }
     }
   }
 
@@ -6890,6 +6934,7 @@ class _CalendarViewState extends State<_CalendarView>
     final bool isTimelineView = CalendarViewHelper.isTimelineView(widget.view);
     AppointmentView? appointmentView;
     const double padding = 10;
+
     final bool isForwardResize = _mouseCursor == SystemMouseCursors.resizeRight;
     final bool isBackwardResize = _mouseCursor == SystemMouseCursors.resizeLeft;
     if (!isTimelineView && widget.view != CalendarView.month) {
@@ -8677,14 +8722,25 @@ class _CalendarViewState extends State<_CalendarView>
       Positioned(
           top: viewHeaderHeight,
           left: 0,
-          right: widget.isHorizontalResource ? null : 0,
-          width: widget.isHorizontalResource ? _timeIntervalHeight : null,
-          height: widget.isHorizontalResource ? height : timeLabelSize,
+          right: widget.isHorizontalResource &&
+                  !(widget.view == CalendarView.timelineMonth)
+              ? null
+              : 0,
+          width: widget.isHorizontalResource &&
+                  !(widget.view == CalendarView.timelineMonth)
+              ? _timeIntervalHeight
+              : null,
+          height: widget.isHorizontalResource &&
+                  !(widget.view == CalendarView.timelineMonth)
+              ? height
+              : timeLabelSize,
           child: ListView(
             padding: EdgeInsets.zero,
             controller: _timelineRulerController,
-            scrollDirection:
-                widget.isHorizontalResource ? Axis.vertical : Axis.horizontal,
+            scrollDirection: widget.isHorizontalResource &&
+                    !(widget.view == CalendarView.timelineMonth)
+                ? Axis.vertical
+                : Axis.horizontal,
             physics: const _CustomNeverScrollableScrollPhysics(),
             children: <Widget>[
               RepaintBoundary(
@@ -8700,16 +8756,105 @@ class _CalendarViewState extends State<_CalendarView>
                     CalendarViewHelper.isTimelineView(widget.view),
                     widget.visibleDates,
                     widget.textScaleFactor,
-                    isHorizontalResource: widget.isHorizontalResource),
+                    isHorizontalResource: widget.isHorizontalResource,
+                    isTimelineMonth: widget.view == CalendarView.timelineMonth),
                 size: widget.isHorizontalResource
                     ? Size(_timeIntervalHeight, height)
                     : Size(width, timeLabelSize),
               ))
             ],
           )),
+
+//  Positioned(
+//           top: viewHeaderHeight + timeLabelSize,
+//           left: widget.isHorizontalResource ? 0 /*90*/ : 0,
+//           right: 0,
+//           bottom: 0,
+//           child: Scrollbar(
+//             controller: widget.isHorizontalResource
+//                 ? _timelineViewVerticalScrollController
+//                 : _scrollController,
+//             thumbVisibility: !widget.isMobilePlatform,
+//             child: ListView(
+//                 padding: EdgeInsets.zero,
+//                 controller: widget.isHorizontalResource
+//                     ? _timelineViewVerticalScrollController
+//                     : _scrollController,
+//                 scrollDirection: widget.isHorizontalResource
+//                     ? Axis.vertical
+//                     : Axis.horizontal,
+//                 physics: const _CustomNeverScrollableScrollPhysics(),
+//                 children: <Widget>[
+//                   SizedBox(
+//                       //width: widget.isHorizontalResource ? height : width,
+//                       width: width,
+//                       height: height,
+//                       child: Stack(children: <Widget>[
+//                         Scrollbar(
+//                             controller: widget.isHorizontalResource
+//                                 ? _scrollController
+//                                 : _timelineViewVerticalScrollController,
+//                             thumbVisibility: !widget.isMobilePlatform,
+//                             child: ListView(
+//                                 padding: EdgeInsets.zero,
+//                                 controller: widget.isHorizontalResource
+//                                     ? _scrollController
+//                                     : _timelineViewVerticalScrollController,
+//                                 physics: isResourceEnabled
+//                                     ? const ClampingScrollPhysics()
+//                                     : const NeverScrollableScrollPhysics(),
+//                                 children: <Widget>[
+//                                   Stack(children: <Widget>[
+//                                     RepaintBoundary(
+//                                         child: _CalendarMultiChildContainer(
+//                                       width: width,
+//                                       height: height,
+//                                       // width: widget.isHorizontalResource
+//                                       //     ? height
+//                                       //     : width,
+//                                       // height: widget.isHorizontalResource
+//                                       //     ? width
+//                                       //     : height,
+//                                       children: <Widget>[
+//                                         RepaintBoundary(
+//                                             child: TimelineWidget(
+//                                                 _horizontalLinesCount!,
+//                                                 widget.visibleDates,
+//                                                 widget.calendar
+//                                                     .timeSlotViewSettings,
+//                                                 _timeIntervalHeight,
+//                                                 widget.calendar.cellBorderColor,
+//                                                 _isRTL,
+//                                                 widget.calendarTheme,
+//                                                 widget.themeData,
+//                                                 _calendarCellNotifier,
+//                                                 _scrollController!, // timelineVertical scroll controller need to be sent
+//                                                 widget.regions,
+//                                                 resourceItemHeight,
+//                                                 widget.resourceCollection,
+//                                                 widget.textScaleFactor,
+//                                                 widget.isMobilePlatform,
+//                                                 widget
+//                                                     .calendar.timeRegionBuilder,
+
+//                                                 ///TODOs Need to check the Sizes need to changed. Width & height
+//                                                 // widget.isHorizontalResource
+//                                                 //     ? height
+//                                                 //     : width,
+//                                                 // widget.isHorizontalResource
+//                                                 //     ? width
+//                                                 //     : height,
+//                                                 width,
+//                                                 height,
+//                                                 widget.minDate,
+//                                                 widget.maxDate,
+//                                                 widget.blackoutDates,
+//                                                 isHorizontalResource: widget
+//                                                     .isHorizontalResource)),
+
       Positioned(
           top: viewHeaderHeight + timeLabelSize,
-          left: widget.isHorizontalResource ? 90 : 0,
+          left: widget.isHorizontalResource ? 0 /*90*/ : 0,
           right: 0,
           bottom: 0,
           child: Scrollbar(
@@ -8722,6 +8867,7 @@ class _CalendarViewState extends State<_CalendarView>
                 physics: const _CustomNeverScrollableScrollPhysics(),
                 children: <Widget>[
                   SizedBox(
+                      //width: widget.isHorizontalResource ? height : width,
                       width: width,
                       child: Stack(children: <Widget>[
                         Scrollbar(
@@ -8740,6 +8886,12 @@ class _CalendarViewState extends State<_CalendarView>
                                         child: _CalendarMultiChildContainer(
                                       width: width,
                                       height: height,
+                                      // width: widget.isHorizontalResource
+                                      //     ? height
+                                      //     : width,
+                                      // height: widget.isHorizontalResource
+                                      //     ? width
+                                      //     : height,
                                       children: <Widget>[
                                         RepaintBoundary(
                                             child: TimelineWidget(
@@ -8753,7 +8905,7 @@ class _CalendarViewState extends State<_CalendarView>
                                                 widget.calendarTheme,
                                                 widget.themeData,
                                                 _calendarCellNotifier,
-                                                _scrollController!,
+                                                _scrollController!, // timelineVertical scroll controller need to be sent
                                                 widget.regions,
                                                 resourceItemHeight,
                                                 widget.resourceCollection,
@@ -8761,11 +8913,21 @@ class _CalendarViewState extends State<_CalendarView>
                                                 widget.isMobilePlatform,
                                                 widget
                                                     .calendar.timeRegionBuilder,
+
+                                                ///TODOs Need to check the Sizes need to changed. Width & height
+                                                // widget.isHorizontalResource
+                                                //     ? height
+                                                //     : width,
+                                                // widget.isHorizontalResource
+                                                //     ? width
+                                                //     : height,
                                                 width,
                                                 height,
                                                 widget.minDate,
                                                 widget.maxDate,
-                                                widget.blackoutDates)),
+                                                widget.blackoutDates,
+                                                isHorizontalResource: widget
+                                                    .isHorizontalResource)),
                                         RepaintBoundary(
                                             child: _addAppointmentPainter(width,
                                                 height, resourceItemHeight)),
@@ -12377,7 +12539,8 @@ class _TimeRulerView extends CustomPainter {
       this.isTimelineView,
       this.visibleDates,
       this.textScaleFactor,
-      {this.isHorizontalResource = false});
+      {this.isHorizontalResource = false,
+      this.isTimelineMonth = false});
 
   final double horizontalLinesCount;
   final double timeIntervalHeight;
@@ -12392,6 +12555,7 @@ class _TimeRulerView extends CustomPainter {
   final Paint _linePainter = Paint();
   final TextPainter _textPainter = TextPainter();
   final bool isHorizontalResource;
+  final bool isTimelineMonth;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -12429,7 +12593,8 @@ class _TimeRulerView extends CustomPainter {
       for (int i = 0; i < visibleDates.length; i++) {
         date = visibleDates[i];
         _drawTimeLabels(
-            canvas, size, date, hour, xPosition, yPosition, timeTextStyle);
+            canvas, size, date, hour, xPosition, yPosition, timeTextStyle,
+            isTimelineMonth: isTimelineMonth);
         if (isRTL) {
           xPosition -= timelineViewWidth;
         } else {
@@ -12445,7 +12610,8 @@ class _TimeRulerView extends CustomPainter {
   /// Draws the time labels in the time label view for timeslot views in
   /// calendar.
   void _drawTimeLabels(Canvas canvas, Size size, DateTime date, double hour,
-      double xPosition, double yPosition, TextStyle timeTextStyle) {
+      double xPosition, double yPosition, TextStyle timeTextStyle,
+      {bool isTimelineMonth = false}) {
     const int padding = 5;
     final int timeInterval =
         CalendarViewHelper.getTimeInterval(timeSlotViewSettings);
@@ -12461,11 +12627,13 @@ class _TimeRulerView extends CustomPainter {
         canvas.clipRect(
             Rect.fromLTWH(xPosition, 0, timeIntervalHeight, size.height));
         canvas.restore();
-        isHorizontalResource
-            ? canvas.drawLine(Offset(0, xPosition),
-                Offset(timeIntervalHeight, xPosition), _linePainter)
+        isHorizontalResource && !isTimelineMonth
+            ? canvas.drawLine(Offset(0, xPosition + 0),
+                Offset(timeIntervalHeight, xPosition + 0), _linePainter)
             : canvas.drawLine(Offset(xPosition, 0),
                 Offset(xPosition, size.height), _linePainter);
+        print("isHorizontalResource - FALSE : $xPosition, ${size.height}");
+        print("isHorizontalResource - TRUE : $timeIntervalHeight, $xPosition");
       }
 
       final double minute = (i * timeInterval) + hour;
@@ -12498,18 +12666,16 @@ class _TimeRulerView extends CustomPainter {
       double startYPosition = yPosition - (_textPainter.height / 2);
 
       if (isTimelineView) {
-        startYPosition = isHorizontalResource
-            ? isRTL
-                ? startXPosition - padding
-                : startXPosition + padding
+        startYPosition = isHorizontalResource && !isTimelineMonth
+            ? (isRTL ? startXPosition - padding : startXPosition + padding)
             : (size.height - _textPainter.height) / 2;
-        startXPosition = isHorizontalResource
+        startXPosition = isHorizontalResource && !isTimelineMonth
             ? (timeIntervalHeight - _textPainter.height) / 2
             : isRTL
                 ? startXPosition - padding
                 : startXPosition + padding;
       }
-      print("$startXPosition, $startYPosition");
+      print("isTimelineView : $startXPosition, $startYPosition");
       _textPainter.paint(canvas, Offset(startXPosition, startYPosition));
 
       if (!isTimelineView) {
@@ -12524,9 +12690,13 @@ class _TimeRulerView extends CustomPainter {
         }
       } else {
         if (isRTL) {
-          xPosition -= isHorizontalResource ? 30 : timeIntervalHeight;
+          xPosition -= isHorizontalResource && !isTimelineMonth
+              ? 60
+              : timeIntervalHeight;
         } else {
-          xPosition += isHorizontalResource ? 30 : timeIntervalHeight;
+          xPosition += isHorizontalResource && !isTimelineMonth
+              ? 60
+              : timeIntervalHeight;
         }
       }
     }

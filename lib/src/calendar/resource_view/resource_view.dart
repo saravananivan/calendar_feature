@@ -611,7 +611,7 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     // TODO: Rect position need to be changed for isHorizontalResource
     // isHorizontalResource
     //     ? canvas.clipRect(
-    //         Rect.fromLTWH(0, yPosition, size.width, resourceItemHeight))
+    //         Rect.fromLTWH(0, yPosition, resourceItemHeight, resourceItemHeight))
     //     : canvas.clipRect(
     //         Rect.fromLTWH(0, yPosition, size.width, resourceItemHeight));
     _circlePainter.color = resource.color;
@@ -643,7 +643,7 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
         TextSpan(text: resource.displayName, style: displayNameTextStyle);
     _updateNamePainter(span);
     _namePainter.layout(
-        maxWidth: isHorizontalResource ? resourceItemHeight : size.width);
+        maxWidth: isHorizontalResource ? resourceItemHeight - 20 : size.width);
     final double startXPosition = isHorizontalResource
         // ? (resourceItemHeight - _namePainter.width) / 2
         ? actualItemHeight + 0.5

@@ -16,8 +16,8 @@ import '../resource_view/calendar_resource.dart';
 import '../settings/time_slot_view_settings.dart';
 import '../sfcalendar.dart';
 
-/// Used to holds the appointment views in calendar widgets.
 class AppointmentLayout extends StatefulWidget {
+  /// Used to holds the appointment views in calendar widgets.
   /// Constructor to create the appointment layout that holds the appointment
   /// views in calendar widget.
   const AppointmentLayout(
