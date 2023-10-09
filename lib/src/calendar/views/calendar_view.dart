@@ -508,8 +508,9 @@ class _CustomCalendarScrollViewState extends State<CustomCalendarScrollView>
         rightPosition = 0,
         topPosition = 0,
         bottomPosition = 0;
-    final bool isHorizontalNavigation =
-        widget.calendar.monthViewSettings.navigationDirection ==
+    final bool isHorizontalNavigation = widget.isHorizontalResource
+        ? false
+        : widget.calendar.monthViewSettings.navigationDirection ==
                 MonthNavigationDirection.horizontal ||
             widget.view != CalendarView.month;
     print("isHorizontalNavigation : $isHorizontalNavigation");
@@ -8869,6 +8870,7 @@ class _CalendarViewState extends State<_CalendarView>
                   SizedBox(
                       //width: widget.isHorizontalResource ? height : width,
                       width: width,
+                      height: height,
                       child: Stack(children: <Widget>[
                         Scrollbar(
                             controller: _timelineViewVerticalScrollController,

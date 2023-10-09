@@ -8405,7 +8405,7 @@ class _SfCalendarState extends State<SfCalendar>
           ),
           Positioned(
             left: isHorizontalResource
-                ? (isResourceEnabled && !isRTL ? resourceViewSize : 0)
+                ? 0 //(isResourceEnabled && !isRTL ? resourceViewSize : 0)
                 : 0,
             width: isHorizontalResource ? null : resourceViewSize,
             height: isHorizontalResource

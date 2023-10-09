@@ -922,7 +922,7 @@ class _TimelineRenderObject extends CustomCalendarRenderObject {
           points.add(Offset(startXPosition, startYPosition));
           points.add(Offset(endXPosition, endYPosition));
         } else {
-          _linePainter.color = Colors.red ?? calendarTheme.cellBorderColor!;
+          //  _linePainter.color = Colors.red ?? calendarTheme.cellBorderColor!;
           canvas.drawLine(Offset(startXPosition, startYPosition),
               Offset(endXPosition, endYPosition), _linePainter);
         }
@@ -946,14 +946,17 @@ class _TimelineRenderObject extends CustomCalendarRenderObject {
         endYPosition = size.height;
         startYPosition = 0;
         for (int i = 0; i < resourceCollection!.length; i++) {
+          print(
+              "startXPosition: $startXPosition, startYPosition: $startYPosition");
+          print("startXPosition: $startXPosition, endYPosition: $endYPosition");
           canvas.drawLine(Offset(startXPosition, startYPosition),
               Offset(startXPosition, endYPosition), _linePainter);
           startXPosition += resourceItemHeight;
-          if (i / 2 == 0) {
-            _linePainter.color = Colors.red ?? calendarTheme.cellBorderColor!;
-          } else {
-            _linePainter.color = Colors.green ?? calendarTheme.cellBorderColor!;
-          }
+          // if (i / 2 == 0) {
+          //   _linePainter.color = Colors.red ?? calendarTheme.cellBorderColor!;
+          // } else {
+          //   _linePainter.color = Colors.green ?? calendarTheme.cellBorderColor!;
+          // }
         }
       }
 
