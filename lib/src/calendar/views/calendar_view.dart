@@ -5930,12 +5930,12 @@ class _CalendarViewState extends State<_CalendarView>
       return;
     }
 
-    print(
-        "_timelineViewVerticalScrollController!.offset : ${_timelineViewVerticalScrollController!.offset}");
+    // print(
+    //     "_timelineViewVerticalScrollController!.offset : ${_timelineViewVerticalScrollController!.offset}");
 
     if (widget.isHorizontalResource) {
-      print(
-          "_timelineViewVerticalScrollController!.offset : ${_timelineViewVerticalScrollController!.offset}");
+      // print(
+      //     "_timelineViewVerticalScrollController!.offset : ${_timelineViewVerticalScrollController!.offset}");
       if (_timelineRulerController!.offset !=
           _timelineViewVerticalScrollController!.offset) {
         _timelineRulerController!
@@ -8721,7 +8721,8 @@ class _CalendarViewState extends State<_CalendarView>
         ),
       ),
       Positioned(
-          top: viewHeaderHeight,
+          top: viewHeaderHeight +
+              (widget.isHorizontalResource ? resourceItemHeight : 0),
           left: 0,
           right: widget.isHorizontalResource &&
                   !(widget.view == CalendarView.timelineMonth)
@@ -8760,7 +8761,8 @@ class _CalendarViewState extends State<_CalendarView>
                     isHorizontalResource: widget.isHorizontalResource,
                     isTimelineMonth: widget.view == CalendarView.timelineMonth),
                 size: widget.isHorizontalResource
-                    ? Size(_timeIntervalHeight, height)
+                    // ? Size(_timeIntervalHeight, height)
+                    ? Size(_timeIntervalHeight, 2700)
                     : Size(width, timeLabelSize),
               ))
             ],
@@ -8854,7 +8856,10 @@ class _CalendarViewState extends State<_CalendarView>
 //                                                     .isHorizontalResource)),
 
       Positioned(
-          top: viewHeaderHeight + timeLabelSize,
+          top: viewHeaderHeight +
+              (widget.isHorizontalResource
+                  ? resourceItemHeight
+                  : timeLabelSize),
           left: widget.isHorizontalResource ? 0 /*90*/ : 0,
           right: 0,
           bottom: 0,
@@ -8869,8 +8874,8 @@ class _CalendarViewState extends State<_CalendarView>
                 children: <Widget>[
                   SizedBox(
                       //width: widget.isHorizontalResource ? height : width,
-                      width: width,
-                      height: height,
+                      width: height, //width,
+                      height: width, //height,
                       child: Stack(children: <Widget>[
                         Scrollbar(
                             controller: _timelineViewVerticalScrollController,
@@ -12635,7 +12640,7 @@ class _TimeRulerView extends CustomPainter {
             : canvas.drawLine(Offset(xPosition, 0),
                 Offset(xPosition, size.height), _linePainter);
         print("isHorizontalResource - FALSE : $xPosition, ${size.height}");
-        print("isHorizontalResource - TRUE : $timeIntervalHeight, $xPosition");
+        print("isHorizontalResource - TRUE : $timeIntervalHeight, $yPosition");
       }
 
       final double minute = (i * timeInterval) + hour;

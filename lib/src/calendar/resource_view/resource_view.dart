@@ -432,13 +432,6 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     final Size widgetSize = constraints.biggest;
     size = Size(widgetSize.width.isInfinite ? width : widgetSize.width,
         widgetSize.height.isInfinite ? panelHeight : widgetSize.height);
-    print("widgetSize : $widgetSize");
-    print(
-        "widgetSize.width.isInfinite(${widgetSize.width.isInfinite}) ? width($width) : widgetSize.width(${widgetSize.width})");
-    print(
-        "widgetSize.height.isInfinite${widgetSize.height.isInfinite} ? panelHeight(${panelHeight}) : widgetSize.height(${widgetSize.height})");
-    print("performLayout() : $size");
-
     for (dynamic child = firstChild; child != null; child = childAfter(child)) {
       child.layout(constraints.copyWith(
           minWidth: width,

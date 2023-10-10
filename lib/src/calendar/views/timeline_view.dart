@@ -946,9 +946,9 @@ class _TimelineRenderObject extends CustomCalendarRenderObject {
         endYPosition = size.height;
         startYPosition = 0;
         for (int i = 0; i < resourceCollection!.length; i++) {
-          print(
-              "startXPosition: $startXPosition, startYPosition: $startYPosition");
-          print("startXPosition: $startXPosition, endYPosition: $endYPosition");
+          // print(
+          //     "startXPosition: $startXPosition, startYPosition: $startYPosition");
+          // print("startXPosition: $startXPosition, endYPosition: $endYPosition");
           canvas.drawLine(Offset(startXPosition, startYPosition),
               Offset(startXPosition, endYPosition), _linePainter);
           startXPosition += resourceItemHeight;

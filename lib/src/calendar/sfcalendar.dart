@@ -3045,6 +3045,15 @@ class _SfCalendarState extends State<SfCalendar>
           ? _minHeight
           : constraints.maxHeight;
 
+      print("_minWidth: $_minWidth, _minHeight: $_minHeight");
+      print(
+          "constraints.maxWidth == double.infinity: ${constraints.maxWidth == double.infinity}");
+      print("constraints.maxWidth: ${constraints.maxWidth}");
+
+      print(
+          "constraints.maxHeight == double.infinity: ${constraints.maxHeight == double.infinity}");
+      print("constraints.maxHeight: ${constraints.maxHeight}");
+
       _isMobilePlatform =
           CalendarViewHelper.isMobileLayout(Theme.of(context).platform);
       _useMobilePlatformUI =
@@ -8384,8 +8393,14 @@ class _SfCalendarState extends State<SfCalendar>
     );
 
     return Positioned(
-        left: isRTL ? _minWidth - resourceViewSize : 0,
+        //left: isRTL ? _minWidth - resourceViewSize : 0,
         width: isHorizontalResource ? _minWidth : resourceViewSize,
+        left: widget.isHorizontalResource
+            ? (isResourceEnabled && !isRTL ? resourceViewSize : 0)
+            : (isRTL ? _minWidth - resourceViewSize : 0),
+        right: widget.isHorizontalResource
+            ? (isResourceEnabled && isRTL ? resourceViewSize : null)
+            : null,
         top: 0,
         bottom: 0,
         child: Stack(clipBehavior: Clip.none, children: <Widget>[
@@ -8411,7 +8426,9 @@ class _SfCalendarState extends State<SfCalendar>
             height: isHorizontalResource
                 ? /*resourceViewSize*/ resourceItemHeight
                 : null,
-            top: isHorizontalResource ? top : widget.headerHeight + top,
+            top: isHorizontalResource
+                ? widget.headerHeight + viewHeaderHeight
+                : widget.headerHeight + top,
             right: isHorizontalResource
                 ? (isResourceEnabled && isRTL ? resourceViewSize : 0)
                 : null,
