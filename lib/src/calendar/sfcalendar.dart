@@ -5101,11 +5101,14 @@ class _SfCalendarState extends State<SfCalendar>
           _resourceHoverNotifier.value = null;
         }
 
-        final double yPosition =
-            (_resourcePanelScrollController!.offset + localPosition.dy) -
-                startPosition;
+        if (widget.isHorizontalResource) {
+        } else {
+          final double yPosition =
+              (_resourcePanelScrollController!.offset + localPosition.dy) -
+                  startPosition;
 
-        _resourceHoverNotifier.value = Offset(localPosition.dx, yPosition);
+          _resourceHoverNotifier.value = Offset(localPosition.dx, yPosition);
+        }
       }
 
       if (_view != CalendarView.month && _view != CalendarView.schedule) {
