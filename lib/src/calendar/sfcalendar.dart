@@ -5101,14 +5101,21 @@ class _SfCalendarState extends State<SfCalendar>
           _resourceHoverNotifier.value = null;
         }
 
-        if (widget.isHorizontalResource) {
-        } else {
-          final double yPosition =
-              (_resourcePanelScrollController!.offset + localPosition.dy) -
-                  startPosition;
+        // if (widget.isHorizontalResource) {
+        // } else {
+        // final double yPosition =
+        //     (_resourcePanelScrollController!.offset + localPosition.dy) -
+        //         startPosition;
 
-          _resourceHoverNotifier.value = Offset(localPosition.dx, yPosition);
-        }
+        // _resourceHoverNotifier.value = Offset(localPosition.dx, yPosition);
+
+        // }
+
+        final double yPosition =
+            (_resourcePanelScrollController!.offset + localPosition.dy) -
+                startPosition;
+
+        _resourceHoverNotifier.value = Offset(localPosition.dx, yPosition);
       }
 
       if (_view != CalendarView.month && _view != CalendarView.schedule) {
@@ -8378,15 +8385,17 @@ class _SfCalendarState extends State<SfCalendar>
         CalendarViewHelper.getViewHeaderHeight(widget.viewHeaderHeight, _view);
     final double timeLabelSize = CalendarViewHelper.getTimeLabelWidth(
         widget.timeSlotViewSettings.timeRulerSize, _view);
-    final double top = viewHeaderHeight + timeLabelSize;
+    final double top = widget.isHorizontalResource
+        ? viewHeaderHeight - timeLabelSize
+        : viewHeaderHeight + timeLabelSize;
     final double resourceItemHeight = CalendarViewHelper.getResourceItemHeight(
         resourceViewSize,
         height - top,
         widget.resourceViewSettings,
         _resourceCollection!.length);
-
     //TODO fix : resourceItemHeight into resourceItemWidth
-    final double panelWidth = resourceItemHeight * _resourceCollection!.length;
+    final double panelWidth =
+        (resourceItemHeight * _resourceCollection!.length) + resourceItemHeight;
     final double panelHeight = resourceItemHeight * _resourceCollection!.length;
 
     final Widget verticalDivider = VerticalDivider(
@@ -8471,7 +8480,7 @@ class _SfCalendarState extends State<SfCalendar>
                             _resourceHoverNotifier.value,
                             _imagePainterCollection,
                             isHorizontalResource
-                                ? panelHeight
+                                ? panelWidth
                                 : resourceViewSize,
                             isHorizontalResource
                                 ? resourceViewSize

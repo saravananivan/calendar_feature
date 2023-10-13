@@ -602,11 +602,10 @@ class _ResourceViewRenderObject extends CustomCalendarRenderObject {
     /// overflow into next resource view, hence cliped the canvas.
 
     // TODO: Rect position need to be changed for isHorizontalResource
-    // isHorizontalResource
-    //     ? canvas.clipRect(
-    //         Rect.fromLTWH(0, yPosition, resourceItemHeight, resourceItemHeight))
-    //     : canvas.clipRect(
-    //         Rect.fromLTWH(0, yPosition, size.width, resourceItemHeight));
+    isHorizontalResource
+        ? canvas.clipRect(Rect.fromLTWH(0, 0, size.width, resourceItemHeight))
+        : canvas.clipRect(
+            Rect.fromLTWH(0, yPosition, size.width, resourceItemHeight));
     _circlePainter.color = resource.color;
     _circlePainter.strokeWidth = _borderThickness;
     _circlePainter.style = PaintingStyle.stroke;
